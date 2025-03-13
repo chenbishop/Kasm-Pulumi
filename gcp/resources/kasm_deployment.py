@@ -25,9 +25,6 @@ class KasmDeployment:
             helm_zone_config.append(zone_config)
 
 
-        pulumi.export("test", helm_zone_config)
-
-
         self.helm = Release("kasm-helm",
                        ReleaseArgs(
                            chart="../kasm-helm/kasm-single-zone",

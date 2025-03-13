@@ -11,7 +11,7 @@ class SetupKasmAgent:
     def __init__(self, gcp_network, kasm_helm, get_agent_startup_script, get_proxy_startup_script):
         agent_vm = []
         # GCP VM
-        startup_script = get_agent_startup_script(agent_swap_size=4,
+        agent_startup_script = get_agent_startup_script(agent_swap_size=4,
                                             kasm_build_url="https://kasm-static-content.s3.amazonaws.com/kasm_release_1.16.1.98d6fa.tar.gz",
                                             manager_url= data.get("domain"),
                                             manager_token=kasm_helm.manager_token)
@@ -31,7 +31,7 @@ class SetupKasmAgent:
                                        "size": 50,
                                    },
                                },
-                               metadata_startup_script=startup_script,
+                               metadata_startup_script=agent_startup_script,
                                opts=ResourceOptions(
                                    depends_on=[kasm_helm.helm])
                                )
@@ -40,10 +40,11 @@ class SetupKasmAgent:
 
         additional_zones = data.get("additional_kasm_zone")
         self.additional_zone_agents = {}
+        self.additional_zone_proxies = []
         for zone_index in range(2, len(data.get("additional_kasm_zone"))+2):
             zone_config = additional_zones[zone_index-2]
             self.additional_zone_agents[zone_config["name"]] = []
-            startup_script = get_agent_startup_script(agent_swap_size=4,
+            agent_startup_script = get_agent_startup_script(agent_swap_size=4,
                                                 kasm_build_url="https://kasm-static-content.s3.amazonaws.com/kasm_release_1.16.1.98d6fa.tar.gz",
                                                 manager_url= zone_config["domain"],
                                                 manager_token=kasm_helm.manager_token)
@@ -63,11 +64,34 @@ class SetupKasmAgent:
                                          "size": 50,
                                      },
                                  },
-                                 metadata_startup_script=startup_script,
+                                 metadata_startup_script=agent_startup_script,
                                  opts=ResourceOptions(
                                      depends_on=[kasm_helm.helm])
                                  )
                 self.additional_zone_agents[zone_config["name"]] .append(agent)
+
+            # proxy_startup_script = get_proxy_startup_script()
+            proxy = Instance(f"kasm-proxy-{zone_config["name"]}-vm-{zone_config['region']}",
+                             network_interfaces=[{
+                                 "access_configs": [{}],
+                                 "network": gcp_network.vpc.id,
+                                 "subnetwork": gcp_network.additional_zone_subnet[zone_index-2].id
+                             }],
+                             name=f"kasm-proxy-{zone_config["name"]}-vm-{zone_config['region']}",
+                             machine_type=zone_config["proxy_size"],
+                             zone=zone_config["zone"],
+                             boot_disk={
+                                 "initialize_params": {
+                                     "image": "ubuntu-2404-noble-amd64-v20250228",
+                                     "size": 50,
+                                 },
+                             },
+                             # metadata_startup_script=proxy_startup_script,
+                             opts=ResourceOptions(
+                                 depends_on=[kasm_helm.helm])
+                             )
+            self.additional_zone_proxies.append(proxy)
+
 
 
 
