@@ -1,0 +1,28 @@
+config:
+  kasm-gcp:data:
+    region: europe-west2
+    zone: europe-west2-a
+    agent_enable_ssh: "true"
+    domain: kasm.kasm-test.com
+    agent_size: e2-standard-4
+    agent_number: 2
+    additional_kasm_zone:
+      - name: zoneb
+        cloud_provider: gcp
+        region: europe-west1
+        zone: europe-west1-b
+        agent_size: e2-standard-4
+        agent_number: 2
+        load_balancer_ip: "kasm-zoneb-loadbalancer-public-ip"
+        domain: "zoneb.kasm.kasm-test.com"
+      - name: zonec
+        cloud_provider: gcp
+        region: europe-west3
+        zone: europe-west3-a
+        agent_size: e2-standard-4
+        agent_number: 1
+        load_balancer_ip: "kasm-zonec-loadbalancer-public-ip"
+        domain: "zonec.kasm.kasm-test.com"
+  gcp:project: development-451616
+
+
