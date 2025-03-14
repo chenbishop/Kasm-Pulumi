@@ -55,7 +55,7 @@ if [ ! -d "/tmp/Kasm-Pulumi" ]; then
     git clone https://github.com/chenbishop/Kasm-Pulumi.git
 fi
 
-bash /tmp/Kasm-Pulumi/additional_zone/dedicated_proxy/install.sh --domain "{v[0]}" --service-token "{v[1]}" --zone "{v[2]}" --cert "{v[3]}" --cert_key "{v[4]}" 
+bash /tmp/Kasm-Pulumi/additional_zone/dedicated_proxy/install.sh --domain "{v[0]}" --service-token "{v[1]}" --zone "{v[2]}" --cert "/tmp/Kasm-Pulumi/additional_zone/dedicated_proxy/kasm-docker-compose/certs/server.crt" --cert_key "/tmp/Kasm-Pulumi/additional_zone/dedicated_proxy/kasm-docker-compose/certs/server.key" 
 
 """
                                      )
