@@ -100,8 +100,14 @@ EOL
     sudo sed -i "s|hostnames: \[ \"example.example.com\" \]|hostnames: [ \"$domain\" ]|" /opt/kasm/kasm-docker-compose/rdpgw_kasm.yaml
 
     sudo mkdir /opt/kasm/kasm-docker-compose/crt/
-    sudo cp $cert /opt/kasm/kasm-docker-compose/crt/server.crt
-    sudo cp $cert_key /opt/kasm/kasm-docker-compose/crt/server.key
+
+    if [ -n "/opt/kasm/kasm-docker-compose/crt/server.crt" ]; then
+        sudo cp "$cert" /opt/kasm/kasm-docker-compose/crt/server.crt
+    fi
+
+    if [ -n "/opt/kasm/kasm-docker-compose/crt/server.key" ]; then
+        sudo cp "$cert_key" /opt/kasm/kasm-docker-compose/crt/server.key
+    fi
 
     sudo touch /opt/kasm/proxy-setup-completed
     echo "Proxy Startup Script Completed."
