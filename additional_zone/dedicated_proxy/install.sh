@@ -9,8 +9,8 @@ usage() {
     echo "  --domain        The domain name"
     echo "  --service-token The service token"
     echo "  --zone          The zone (e.g., us-east-1)"
-    echo "  --cert-key      The certificate key"
-    echo "  --cert          The certificate file"
+    echo "  --cert-key      The certificate key file location"
+    echo "  --cert          The certificate file location"
     exit 1
 }
 
@@ -95,12 +95,13 @@ KASM_REGISTRATION_TOKEN="$service_token"
 KASM_ZONE="$zone"
 EOL
 
+
     sudo sed -i "s|proxy_pass https://example.example.com:443/api/kasm_connect/;|proxy_pass https://$domain:443/api/kasm_connect/;|" /opt/kasm/kasm-docker-compose/conf/nginx/services.d/upstream_proxy.conf
     sudo sed -i "s|hostnames: \[ \"example.example.com\" \]|hostnames: [ \"$domain\" ]|" /opt/kasm/kasm-docker-compose/rdpgw_kasm.yaml
 
     sudo mkdir /opt/kasm/kasm-docker-compose/crt/
-    sudo bash -c "echo '$cert' > /opt/kasm/kasm-docker-compose/crt/server.crt"
-    sudo bash -c "echo '$cert_key' > /opt/kasm/kasm-docker-compose/crt/server.key"
+    sudo cp $cert /opt/kasm/kasm-docker-compose/crt/server.crt
+    sudo cp $cert_key /opt/kasm/kasm-docker-compose/crt/server.key
 
     sudo touch /opt/kasm/proxy-setup-completed
     echo "Proxy Startup Script Completed."

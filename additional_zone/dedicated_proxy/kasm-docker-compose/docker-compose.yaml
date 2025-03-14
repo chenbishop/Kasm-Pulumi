@@ -17,7 +17,7 @@ services:
     environment:
       API_PORT: "443"
       API_SCHEMA: "https"
-      KUBERNETES_SERVICE_HOST: "TEST"
+      KUBERNETES_SERVICE_HOST: "Kubernetes"
       API_HOSTNAME: ${KASM_API_HOSTNAME}
       REGISTRATION_TOKEN: ${KASM_REGISTRATION_TOKEN}
       ZONE: ${KASM_ZONE}
@@ -41,7 +41,7 @@ services:
     environment:
       API_PORT: "443"
       API_SCHEMA: "https"
-      KUBERNETES_SERVICE_HOST: "TEST"
+      KUBERNETES_SERVICE_HOST: "Kubernetes"
       API_HOSTNAME: ${KASM_API_HOSTNAME}
       REGISTRATION_TOKEN: ${KASM_REGISTRATION_TOKEN}
       ZONE: ${KASM_ZONE}
@@ -59,7 +59,7 @@ services:
     networks:
       - kasm_default_network
     environment:
-      KUBERNETES_SERVICE_HOST: "TEST"
+      KUBERNETES_SERVICE_HOST: "Kubernetes"
       API_HOSTNAME: ${KASM_API_HOSTNAME}
       REGISTRATION_TOKEN: ${KASM_REGISTRATION_TOKEN}
       ZONE: ${KASM_ZONE}
