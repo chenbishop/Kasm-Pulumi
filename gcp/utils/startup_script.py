@@ -38,10 +38,10 @@ echo "Done"
 """
                                      )
 
-def get_proxy_startup_script(service_token):
+def get_proxy_startup_script(domain, service_token, zone, cert, cert_key):
 
-    return pulumi.Output.all(service_token
+    return pulumi.Output.all(domain, service_token, zone, cert. cert_key
                              ).apply(lambda v: f"""#!/bin/bash
-
+git clone 
 """
                                      )

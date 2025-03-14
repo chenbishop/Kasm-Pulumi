@@ -63,8 +63,18 @@ class KasmDeployment:
                                                     )
                                                     )
 
+        self.kasm_nginx_cert = Secret.get(f'kasm/kasm-nginx-proxy-cert',
+                                       self.helm.status.status.apply(lambda v: f'kasm/kasm-nginx-proxy-cert'),
+                                       opts=pulumi.ResourceOptions(
+                                           depends_on=[self.helm],
+                                           provider=kubernetes_provider,
+                                       )
+                                       )
+
 
         self.manager_token = self.kasm_secrets.data["manager-token"].apply(lambda v: base64.b64decode(v).decode('utf-8'))
+        self.tls_crt = self.kasm_nginx_cert.data["tls.crt"].apply(lambda v: base64.b64decode(v).decode('utf-8'))
+        self.tls_key = self.kasm_nginx_cert.data["tls.key"].apply(lambda v: base64.b64decode(v).decode('utf-8'))
         pulumi.export("Kasm URL", data.get("domain"))
         pulumi.export("Kasm Admin User:", "admin@kasm.local")
         pulumi.export("Kasm Un-privileged User", "user@kasm.local")
@@ -74,4 +84,5 @@ class KasmDeployment:
         pulumi.export("Kasm Manager Token", self.manager_token)
         pulumi.export("Kasm Service Registration Token", self.kasm_secrets.data["service-token"].apply(lambda v: base64.b64decode(v).decode('utf-8')))
         pulumi.export("Kasm Redis Password", self.kasm_secrets.data["redis-password"].apply(lambda v: base64.b64decode(v).decode('utf-8')))
-
+        pulumi.export("TLS crt", self.tls_crt)
+        pulumi.export("TLS key", self.tls_key)
