@@ -48,15 +48,15 @@ if [ ! -d "/tmp/Kasm-Pulumi" ]; then
     git clone https://github.com/chenbishop/Kasm-Pulumi.git
 fi
 
-bash /tmp/Kasm-Pulumi/additional_zone/dedicated_proxy/install.sh --domain "{v[0]}" --service-token "{v[1]}" --zone "{v[2]}" --cert "/tmp/Kasm-Pulumi/additional_zone/dedicated_proxy/kasm-docker-compose/certs/server.crt" --cert_key "/tmp/Kasm-Pulumi/additional_zone/dedicated_proxy/kasm-docker-compose/certs/server.key" 
+bash /tmp/Kasm-Pulumi/additional_zone/dedicated_proxy/install.sh --domain "{v[0]}" --service-token "{v[1]}" --zone "{v[2]}" --cert "/tmp/Kasm-Pulumi/additional_zone/dedicated_proxy/kasm-docker-compose/certs/server.crt" --cert-key "/tmp/Kasm-Pulumi/additional_zone/dedicated_proxy/kasm-docker-compose/certs/server.key" 
 
 sudo mkdir -p /tmp/Kasm-Pulumi/additional_zone/dedicated_proxy/kasm-docker-compose/certs
 sudo cat > /tmp/Kasm-Pulumi/additional_zone/dedicated_proxy/kasm-docker-compose/certs/server.crt << EOL
-{cert}
+{v[3]}
 EOL
 
 sudo cat > /tmp/Kasm-Pulumi/additional_zone/dedicated_proxy/kasm-docker-compose/certs/server.key << EOL
-{cert_key}
+{v[4]}
 EOL
 
 """
