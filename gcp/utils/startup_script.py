@@ -40,8 +40,14 @@ echo "Done"
 
 def get_proxy_startup_script(domain, service_token, zone, cert, cert_key):
 
-    return pulumi.Output.all(domain, service_token, zone, cert. cert_key
-                             ).apply(lambda v: f"""#!/bin/bash
-git clone 
+    return pulumi.Output.all(domain, service_token, zone, cert, cert_key).apply(lambda v: f"""#!/bin/bash
+# If the directory does not exist, clone the repository
+cd /tmp
+if [ ! -d "/tmp/Kasm-Pulumi" ]; then
+    git clone https://github.com/chenbishop/Kasm-Pulumi.git
+fi
+
+bash /tmp/Kasm-Pulumi/additional_zone/dedicated_proxy/install.sh --domain "{v[0]}" --service-token "{v[1]}" --zone "{v[2]}" --cert "{v[3]}" --cert_key "{v[4]}" 
+
 """
                                      )

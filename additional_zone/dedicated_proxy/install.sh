@@ -80,8 +80,12 @@ if [[ ! -e /opt/kasm/proxy-startup-script-completed ]]; then
     sudo apt-get update
     sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
+
     cd /tmp
-    git clone https://github.com/chenbishop/Kasm-Pulumi.git
+    if [ ! -d "/tmp/Kasm-Pulumi" ]; then
+        # If the directory does not exist, clone the repository
+        git clone https://github.com/chenbishop/Kasm-Pulumi.git
+    fi
     sudo mkdir /opt/kasm
     sudo cp -r /tmp/Kasm-Pulumi/additional_zone/dedicated_proxy/kasm-docker-compose /opt/kasm/
 
@@ -94,6 +98,7 @@ EOL
     sudo sed -i "s|proxy_pass https://example.example.com:443/api/kasm_connect/;|proxy_pass https://$domain:443/api/kasm_connect/;|" /opt/kasm/kasm-docker-compose/conf/nginx/services.d/upstream_proxy.conf
     sudo sed -i "s|hostnames: \[ \"example.example.com\" \]|hostnames: [ \"$domain\" ]|" /opt/kasm/kasm-docker-compose/rdpgw_kasm.yaml
 
+    sudo mkdir /opt/kasm/kasm-docker-compose/crt/
     sudo bash -c "echo '$cert' > /opt/kasm/kasm-docker-compose/crt/server.crt"
     sudo bash -c "echo '$cert_key' > /opt/kasm/kasm-docker-compose/crt/server.key"
 

@@ -73,6 +73,7 @@ class KasmDeployment:
 
 
         self.manager_token = self.kasm_secrets.data["manager-token"].apply(lambda v: base64.b64decode(v).decode('utf-8'))
+        self.service_token = self.kasm_secrets.data["service-token"].apply(lambda v: base64.b64decode(v).decode('utf-8'))
         self.tls_crt = self.kasm_nginx_cert.data["tls.crt"].apply(lambda v: base64.b64decode(v).decode('utf-8'))
         self.tls_key = self.kasm_nginx_cert.data["tls.key"].apply(lambda v: base64.b64decode(v).decode('utf-8'))
         pulumi.export("Kasm URL", data.get("domain"))
@@ -82,7 +83,7 @@ class KasmDeployment:
         pulumi.export("Kasm User Password", self.kasm_secrets.data["user-password"].apply(lambda v: base64.b64decode(v).decode('utf-8')))
         pulumi.export("Kasm DB Password:", self.kasm_secrets.data["db-password"].apply(lambda v: base64.b64decode(v).decode('utf-8')))
         pulumi.export("Kasm Manager Token", self.manager_token)
-        pulumi.export("Kasm Service Registration Token", self.kasm_secrets.data["service-token"].apply(lambda v: base64.b64decode(v).decode('utf-8')))
+        pulumi.export("Kasm Service Registration Token", self.service_token)
         pulumi.export("Kasm Redis Password", self.kasm_secrets.data["redis-password"].apply(lambda v: base64.b64decode(v).decode('utf-8')))
         pulumi.export("TLS crt", self.tls_crt)
         pulumi.export("TLS key", self.tls_key)

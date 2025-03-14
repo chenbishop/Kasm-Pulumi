@@ -70,7 +70,7 @@ class SetupKasmAgent:
                                  )
                 self.additional_zone_agents[zone_config["name"]] .append(agent)
 
-            # proxy_startup_script = get_proxy_startup_script()
+            proxy_startup_script = get_proxy_startup_script(zone_config["domain"], kasm_helm.service_token, zone_config["name"], kasm_helm.tls_crt, kasm_helm.tls_key)
             proxy = Instance(f"kasm-proxy-{zone_config["name"]}-vm-{zone_config['region']}",
                              network_interfaces=[{
                                  "access_configs": [{}],
@@ -86,7 +86,7 @@ class SetupKasmAgent:
                                      "size": 50,
                                  },
                              },
-                             # metadata_startup_script=proxy_startup_script,
+                             metadata_startup_script=proxy_startup_script,
                              opts=ResourceOptions(
                                  depends_on=[kasm_helm.helm])
                              )
