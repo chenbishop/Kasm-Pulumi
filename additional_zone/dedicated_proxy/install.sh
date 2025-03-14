@@ -101,12 +101,12 @@ EOL
 
     sudo mkdir -p /opt/kasm/kasm-docker-compose/crt/
 
-    if [ -n "/opt/kasm/kasm-docker-compose/crt/server.crt" ]; then
+    if [ ! -f /opt/kasm/kasm-docker-compose/crt/server.crt ]; then
         sudo cp "$cert" /opt/kasm/kasm-docker-compose/crt/server.crt
     fi
 
-    if [ -n "/opt/kasm/kasm-docker-compose/crt/server.key" ]; then
-        sudo cp "$cert_key" /opt/kasm/kasm-docker-compose/crt/server.key
+    if [ ! -f /opt/kasm/kasm-docker-compose/crt/server.key ]; then
+        sudo cp "$cert" /opt/kasm/kasm-docker-compose/crt/server.key
     fi
 
     sudo touch /opt/kasm/proxy-setup-completed
