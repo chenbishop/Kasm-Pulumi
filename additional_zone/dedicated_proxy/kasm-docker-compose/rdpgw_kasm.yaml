@@ -1,7 +1,7 @@
 api:
   auth_token: JWTTOKEN
   public_jwt_cert: PUBLICCERT
-  hostnames: [ "kasm.kasm-test.com" ]
+  hostnames: [ "example.example.com" ]
   port: 443
   hostname_refresh_interval: 30
   schema: https
