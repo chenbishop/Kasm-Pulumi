@@ -99,7 +99,7 @@ EOL
     sudo sed -i "s|proxy_pass https://example.example.com:443/api/kasm_connect/;|proxy_pass https://$domain:443/api/kasm_connect/;|" /opt/kasm/kasm-docker-compose/conf/nginx/services.d/upstream_proxy.conf
     sudo sed -i "s|hostnames: \[ \"example.example.com\" \]|hostnames: [ \"$domain\" ]|" /opt/kasm/kasm-docker-compose/rdpgw_kasm.yaml
 
-    sudo mkdir /opt/kasm/kasm-docker-compose/crt/
+    sudo mkdir -p /opt/kasm/kasm-docker-compose/crt/
 
     if [ -n "/opt/kasm/kasm-docker-compose/crt/server.crt" ]; then
         sudo cp "$cert" /opt/kasm/kasm-docker-compose/crt/server.crt
