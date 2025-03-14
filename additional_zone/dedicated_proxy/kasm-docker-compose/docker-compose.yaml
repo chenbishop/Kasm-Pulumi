@@ -36,7 +36,6 @@ services:
     volumes:
       - ./certs/server.crt:/usr/local/etc/rdpproxy/rdpproxy.crt
       - ./certs/server.key:/usr/local/etc/rdpproxy/rdpproxy.key
-      - ./logs:/opt/kasm/current/log
       #- ./redemption/tools/passthrough/passthrough.py:/usr/local/share/passthrough/passthrough.py
     environment:
       API_PORT: "443"

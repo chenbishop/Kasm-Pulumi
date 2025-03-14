@@ -109,6 +109,9 @@ EOL
         sudo cp "$cert" /opt/kasm/kasm-docker-compose/certs/server.key
     fi
 
+    cd /opt/kasm/kasm-docker-compose
+    sudo docker network create kasm_default_network
+    sudo docker compose up -d
     sudo touch /opt/kasm/proxy-setup-completed
     echo "Proxy Startup Script Completed."
 fi;
