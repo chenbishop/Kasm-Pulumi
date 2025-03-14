@@ -1,5 +1,5 @@
 from pulumi import Config
-from pulumi_gcp.compute import Network, Subnetwork, Router, RouterNat, GlobalAddress, Firewall
+from pulumi_gcp.compute import Network, Subnetwork, Router, RouterNat, GlobalAddress, Firewall, Address
 from pulumi_gcp.dns import ManagedZone, ManagedZonePrivateVisibilityConfigArgs, \
     ManagedZonePrivateVisibilityConfigNetworkArgs
 from pulumi_gcp.servicenetworking import Connection
@@ -105,6 +105,7 @@ class SetupGcpNetwork:
 
         # Public IP for GKE Ingress Load Balancer
         self.public_ip_address = GlobalAddress("kasm-loadbalancer-public-ip", name="kasm-loadbalancer-public-ip")
+        pulumi.export("primary_ingress_loadbalancer", self.public_ip_address.address)
 
 
         self.private_vpc_connection = Connection(f"kasm-connection",
@@ -116,6 +117,7 @@ class SetupGcpNetwork:
         # Additional Zone Resources
         additional_zones = data.get("additional_kasm_zone")
         self.additional_zone_public_ip_address = []
+        self.additional_zone_proxy_vm_public_ip_address=[]
         self.additional_zone_subnet=[]
         self.additional_zone_router=[]
         self.additional_zone_nat=[]
@@ -154,3 +156,10 @@ class SetupGcpNetwork:
             # Additional Zone Public IP for GKE Ingress Load Balancer
             public_ip_address = GlobalAddress(f'kasm-{zone_config["name"]}-loadbalancer-public-ip', name=f'kasm-{zone_config["name"]}-loadbalancer-public-ip')
             self.additional_zone_public_ip_address.append(public_ip_address)
+            pulumi.export(f"{zone_config["name"]}_ingress_loadbalancer", public_ip_address.address)
+
+
+            proxy_public_ip_address = Address(f'kasm-{zone_config["name"]}-proxy-public-ip', name=f'kasm-{zone_config["name"]}-proxy-public-ip', region=zone_config["region"])
+            self.additional_zone_proxy_vm_public_ip_address.append(proxy_public_ip_address)
+            pulumi.export(f"{zone_config["name"]}-proxy-public-ip", proxy_public_ip_address.address)
+

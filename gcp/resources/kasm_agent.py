@@ -73,9 +73,11 @@ class SetupKasmAgent:
             proxy_startup_script = get_proxy_startup_script(data.get("domain"), kasm_helm.service_token, zone_config["name"], kasm_helm.tls_crt, kasm_helm.tls_key)
             proxy = Instance(f"kasm-proxy-{zone_config["name"]}-vm-{zone_config['region']}",
                              network_interfaces=[{
-                                 "access_configs": [{}],
+                                 "access_configs":  [{
+                                     "nat_ip": gcp_network.additional_zone_proxy_vm_public_ip_address[zone_index-2].address,
+                                 }],
                                  "network": gcp_network.vpc.id,
-                                 "subnetwork": gcp_network.additional_zone_subnet[zone_index-2].id
+                                 "subnetwork": gcp_network.additional_zone_subnet[zone_index-2].id,
                              }],
                              name=f"kasm-proxy-{zone_config["name"]}-vm-{zone_config['region']}",
                              machine_type=zone_config["proxy_size"],

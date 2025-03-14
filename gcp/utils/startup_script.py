@@ -57,6 +57,7 @@ sudo cat > /tmp/Kasm-Pulumi/additional_zone/dedicated_proxy/kasm-docker-compose/
 {v[4]}
 EOL
 
+# setting up the proxy
 bash /tmp/Kasm-Pulumi/additional_zone/dedicated_proxy/install.sh --domain "{v[0]}" --service-token "{v[1]}" --zone "{v[2]}" --cert "/tmp/Kasm-Pulumi/additional_zone/dedicated_proxy/kasm-docker-compose/certs/server.crt" --cert-key "/tmp/Kasm-Pulumi/additional_zone/dedicated_proxy/kasm-docker-compose/certs/server.key" 
 
 """
