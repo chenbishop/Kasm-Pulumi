@@ -69,6 +69,18 @@ class SetupGcpNetwork:
             source_ranges=["0.0.0.0/0"]
         )
 
+        # # Firewall for HTTP
+        # self.compute_http_firewall = Firewall(
+        #     f"kasm-enable-http-firewall",
+        #     name=f"kasm-enable-http-firewall",
+        #     network=self.vpc.self_link,
+        #     allows=[{
+        #         "protocol": "tcp",
+        #         "ports": ["80"]
+        #     }],
+        #     source_ranges=["0.0.0.0/0"]
+        # )
+
         # self.compute_firewall = Firewall(
         #     f"firewall-{gcp_config.get('region')}-nfs",
         #     name=f"enable-nfs-{gcp_config.get('region')}",
