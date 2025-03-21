@@ -8,11 +8,20 @@ from time import sleep
 config = Config()
 data = config.require_object("data")
 gcp_config = Config("gcp")
+secrets = config.require_secret_object("data")
+cert = secrets.apply(lambda secret_obj: secret_obj.get("cert"))
+cert_key = secrets.apply(lambda secret_obj: secret_obj.get("cert_key"))
+pulumi.export("test1", cert)
 
+## setting default cert and key helm values
+cert = cert.apply(lambda v: """######    Place public SSL Cert here     ######
+######  Leave empty for Helm to generate ######""" if "Leave it as it is for Helm to generate" in v else v)
+cert_key = cert_key.apply(lambda v: """######    Place public SSL Key here      ######
+######  Leave empty for Helm to generate ######""" if "Leave it as it is for Helm to generate" in v else v)
+pulumi.export("test2", cert)
 
 class KasmDeployment:
     def __init__(self, gcp_network, kubernetes_provider, gcp_db):
-
         helm_zone_config = []
         for zone in data.get("additional_kasm_zone"):
             zone_config = {
@@ -43,6 +52,12 @@ class KasmDeployment:
                                        "dbPassword": gcp_db.kasm_user.password,
                                    },
                                },
+                               "kasmCerts": {
+                                   "ingress": {
+                                       "cert": cert,
+                                       "key": cert_key
+                                   }
+                               }
                            },
                            namespace="kasm",
                            skip_await=False,

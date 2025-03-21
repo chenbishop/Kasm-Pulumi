@@ -25,6 +25,8 @@ config:
         agent_number: 1
         load_balancer_ip: "kasm-zonec-loadbalancer-public-ip"
         domain: "zonec.kasm.kasm-test.com"
+    cert: "Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.pem | pulumi config set --path data.cert --secret`"
+    cert_key: "Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.key | pulumi config set --path data.cert_key --secret`"
   gcp:project: development-451616
 
 
