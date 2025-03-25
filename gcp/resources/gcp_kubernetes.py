@@ -57,6 +57,7 @@ users:
 """.format(info[2]['cluster_ca_certificate'], info[1],
            '{0}_{1}_{2}'.format(gcp_config.get("project"), data.get("zone"), info[0])))
 
+        # Construct K8S provider
         self.cluster_provider = Provider('gke_k8s',
                                          kubeconfig=self.cluster_config,
                                          opts=ResourceOptions(depends_on=[self.cluster],

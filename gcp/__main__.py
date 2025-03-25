@@ -14,8 +14,8 @@ data = config.require_object("data")
 gcp_network = SetupGcpNetwork()
 
 # Create GCP postgres DB
-# db_password = password_generator(13)
-# gcp_db = SetupGcpDb(gcp_network, db_password)
+db_password = password_generator(13)
+gcp_db = SetupGcpDb(gcp_network, db_password)
 
 # Crete GKE Cluster
 # gcp_cluster = SetupGcpKubernetes(gcp_network)

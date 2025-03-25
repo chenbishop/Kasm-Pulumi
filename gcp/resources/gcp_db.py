@@ -12,6 +12,7 @@ data = config.require_object("data")
 
 class SetupGcpDb:
     def __init__(self, gcp_network, db_password):
+
         # Create DB instance
         self.db_instance = DatabaseInstance(f"kasm-db-instance",
                                             name=f"kasm-db",
@@ -43,6 +44,7 @@ class SetupGcpDb:
                                        managed_zone=gcp_network.private_zone.name,
                                        rrdatas=[self.db_instance.private_ip_address])
 
+        # Create Postgres DB user
         self.kasm_user = sql.User("kasm-db-user",
                                       instance=self.db_instance.name,
                                       name="kasmapp",
@@ -51,6 +53,7 @@ class SetupGcpDb:
                                           depends_on=[self.db_instance],
                                           ignore_changes=["password"]))
 
+        # Create Postgres DB
         self.kasm_db = sql.Database("kasm-db",
                                               name="kasm",
                                               instance=self.db_instance.name,
