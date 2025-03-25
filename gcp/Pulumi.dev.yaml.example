@@ -19,7 +19,6 @@ config:
         proxy_size: e2-standard-2
         agent_size: e2-standard-4
         agent_number: 2
-        load_balancer_ip: "kasm-zoneb-loadbalancer-public-ip"
         domain: "zoneb.kasm.kasm-test.com"
       - name: zonec
         cloud_provider: gcp
@@ -28,7 +27,6 @@ config:
         proxy_size: e2-standard-2
         agent_size: e2-standard-4
         agent_number: 1
-        load_balancer_ip: "kasm-zonec-loadbalancer-public-ip"
         domain: "zonec.kasm.kasm-test.com"
     cert: "Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.pem | pulumi config set --path data.cert --secret`"
     cert_key: "Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.key | pulumi config set --path data.cert_key --secret`"
