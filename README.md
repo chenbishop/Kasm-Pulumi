@@ -2,19 +2,21 @@
 
 This project is intended to be starting examples and for automating Kasm Workspaces deployments via [Pulumi](https://www.pulumi.com/).
 
-The project is currently under development and not ready to use. 
+The project is currently under development and not ready to use.
 
-Cert:
-1. on default generate self sign cert but if you would like to use your own cert
-2. cert: "Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.pem | pulumi config set --path data.cert --secret`"
-3. key: "Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.key | pulumi config set --path data.cert_key --secret`"
+### Features and Architecture
+The example scripts provide the capability to deploy a multi-zone Kasm across various cloud providers.
+
+1. **Automated Network Setup**: The entire network stack is automatically configured and provisioned through a Pulumi script, ensuring seamless deployment and infrastructure management.
+
+2. **Cloud-Managed PostgreSQL Database**: A fully managed PostgreSQL database is provisioned in the cloud and integrated with the Kasm control plane for centralized and reliable data management.
+
+3. **Kubernetes Cluster Deployment**: A Kubernetes cluster is set up to host the Kasm control plane, which includes the Kasm Managers for all defined zones.
+
+4. **Agents and Proxies**: Kasm agents and proxies are deployed within virtual machines located in the same cloud region as the corresponding Kasm zone, enabling user sessions to be routed through the nearest available region for enhanced performance and reduced latency.
+
+![img.png](assets/architecture.png)
 
 
-
-pre-steps:
-1. dns zone, if already have one, cloud_dns_zone.create set to false (default is true) and modify the cloud_dns_zone.zone_name and cloud_dns_zone.zone_dns_name
-2. if dont have one, make sure cloud_dns_zone.create is true and modify cloud_dns_zone.zone_name and cloud_dns_zone.zone_dns_name and point your cloud domain to the created dns once the pulumi script finishes 
-
-additional:
-1. postgres DB have the flag deletion_protection=False and deletion_protection_enabled=False, change this to true in gcp_db.py base on your preference
-2. GKE cluster have the flag deletion_protection= False, change this in gcp_kubernetes.py based on your preference
+### Current Supported Cloud Providers
+[GCP](./gcp/README.md): Deploy multi-zone Kasm to your GCP project
