@@ -12,6 +12,77 @@ Before using the Pulumi script, ensure that the following requirements are met:
 - **Pulumi GCP Provider**: You will need to install the Pulumi GCP and Pulumi Kubernetes providers.
 
 
+## Authenticate with GCP
+```bash
+gcloud auth application-default login
+```
+
+## Clone Git repo
+TODO: to be changed
+```bash
+git clone https://github.com/chenbishop/Kasm-Pulumi
+cd Kasm-Pulumi
+```
+
+## Setup Python Environment
+```bash
+cd gcp
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+## Setup Pulumi Stack
+```bash
+pulumi stack init dev
+cp Pulumi.dev.yaml.example Pulumi.dev.yaml
+pulumi config set gcp:project <your-project-id>
+```
+
+## Config Pulumi Stack
+Modify `Pulumi.dev.yaml` as follows:
+
+### kasm-gcp:data
+**region**: The GCP region for the primary Kasm zone. Example: `europe-west2`.
+**zone**: The GCP zone for the primary Kasm zone. Example: `europe-west2-a`.
+**agent_enable_ssh**: Set to `true` to enable SSH access for Kasm agent and proxy VMs, otherwise set to `false`.
+**domain**: The domain to be used for the primary Kasm zone (e.g. `kasm.kasm-test.com`). The domain needs to be owned by you.
+**agent_size**: The instance size for Kasm agents in the primary zone. Example: `e2-standard-4`.
+**agent_number**: The number of Kasm agent instances to deploy in the primary zone. Example: `2`.
+**agent_disk_size**: The disk size (in GB) for each Kasm agent instance across **all** zones. Example: `100`.
+
+### kasm-gcp:data.cloud_dns_zone
+**create**: Set to `true` if you do not have a Cloud DNS zone already, the Pulumi script will create a new Cloud zone for you and you need to manually link your domain to this DNS zone. Set to `false` if you already have a cloud dns zone (thats already connected to your domain), the cloud dns will not be created, instead we will use the existing one.
+**zone_name**: The name of the Cloud DNS zone to be used (e.g., `kasm-test-com`). the config is only used when `create=false`
+**zone_dns_name**: The DNS name for the Cloud DNS zone (e.g., `kasm-test.com.`). the config is only used when `create=true`
+
+### kasm-gcp:data.additional_kasm_zone
+A list of additional Kasm zones to be deployed. Each zone will have its own set of configurations:
+**name**: A unique name for each additional Kasm zone (e.g., `zoneb`, `zonec`).
+
+**cloud_provider**: The cloud provider to use for the additional zone. Set to gcp for Google Cloud Platform.
+
+**region**: The GCP region for the additional kasm zone (e.g., `europe-west1`).
+
+**zone**: The GCP availability zone for the additional zone (e.g., `europe-west1-b`).
+
+**proxy_size**: The instance size for Kasm proxies in the additional zone. Example: e2-standard-2.
+
+**agent_size**: The instance size for Kasm agents in the additional zone. Example: `e2-standard-4`.
+**agent_number**: The number of Kasm agent instances to deploy in the additional zone. Example: `2`.
+
+domain: The domain name for the additional Kasm zone (e.g., zoneb.kasm.kasm-test.com).
+
+
+
+
+
+
+
+
+
+
+
 
 
 Cert:

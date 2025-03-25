@@ -2,7 +2,7 @@ config:
   kasm-gcp:data:
     region: europe-west2
     zone: europe-west2-a
-    agent_enable_ssh: "true"
+    agent_enable_ssh: true
     domain: kasm.kasm-test.com
     agent_size: e2-standard-4
     agent_number: 2
@@ -30,6 +30,6 @@ config:
         domain: "zonec.kasm.kasm-test.com"
     cert: "Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.pem | pulumi config set --path data.cert --secret`"
     cert_key: "Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.key | pulumi config set --path data.cert_key --secret`"
-  gcp:project: development-451616
+  gcp:project: development-xxx
 
 

@@ -45,7 +45,7 @@ class SetupGcpNetwork:
                              })
 
         # Firewall for SSH
-        if data.get("agent_enable_ssh")=="true":
+        if data.get("agent_enable_ssh"):
             self.compute_ssh_firewall = Firewall(
                 f"kasm-enable-ssh-firewall",
                 name=f"kasm-enable-ssh-firewall",
