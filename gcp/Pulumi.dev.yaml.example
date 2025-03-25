@@ -6,6 +6,11 @@ config:
     domain: kasm.kasm-test.com
     agent_size: e2-standard-4
     agent_number: 2
+    agent_disk_size: 100
+    cloud_dns_zone:
+      create: true
+      zone_name: kasm-test-com
+      zone_dns_name: kasm-test.com.
     additional_kasm_zone:
       - name: zoneb
         cloud_provider: gcp

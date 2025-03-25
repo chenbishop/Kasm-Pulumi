@@ -27,9 +27,7 @@ class KasmDeployment:
             zone_config = {
                 "name": zone["name"],
                 "cloudProvider": zone["cloud_provider"],
-                "hostName": zone["domain"],
-                "loadBalancerIP": zone["load_balancer_ip"]
-
+                "hostName": zone["domain"]
             }
             helm_zone_config.append(zone_config)
 

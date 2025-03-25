@@ -1,4 +1,18 @@
-# Kasm GCP Deployment
+# Kasm GCP Deployment (Python)
+This example automates the deployment of a **multi-zone Kasm** across Google Cloud Platform (GCP). The script sets up all necessary resources, including networking, PostgreSQL database, Kubernetes cluster, and Kasm agents and proxies for seamless deployment.
+
+## Prerequisites
+
+Before using the Pulumi script, ensure that the following requirements are met:
+
+- **Pulumi**: Install [Pulumi](https://www.pulumi.com/docs/get-started/) to manage your infrastructure as code.
+- **Python**: Ensure Python 3.6+ is installed on your machine.
+- **GCP Account**: Ensure you have a Google Cloud Platform account with appropriate permissions to create resources.
+- **Google Cloud SDK**: Install the [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) to authenticate and configure your GCP environment.
+- **Pulumi GCP Provider**: You will need to install the Pulumi GCP and Pulumi Kubernetes providers.
+
+
+
 
 Cert:
 1. on default generate self sign cert but if you would like to use your own cert
@@ -17,3 +31,6 @@ additional:
 
 Input:
 1. agent_disk_size: in GB and recommend 100 GB
+
+
+Service account permissions?
