@@ -14,14 +14,14 @@ data = config.require_object("data")
 gcp_network = SetupGcpNetwork()
 
 # Create GCP postgres DB
-db_password = password_generator(13)
-gcp_db = SetupGcpDb(gcp_network, db_password)
+# db_password = password_generator(13)
+# gcp_db = SetupGcpDb(gcp_network, db_password)
 
 # Crete GKE Cluster
-gcp_cluster = SetupGcpKubernetes(gcp_network)
+# gcp_cluster = SetupGcpKubernetes(gcp_network)
 
 # Deploy Kasm Helm
-kasm_helm = KasmDeployment(gcp_network, gcp_cluster.cluster_provider, gcp_db)
+# kasm_helm = KasmDeployment(gcp_network, gcp_cluster.cluster_provider, gcp_db)
 
-# Deploy Kasm Agent
-kasm_agent = SetupKasmAgent(gcp_network, kasm_helm, get_agent_startup_script, get_proxy_startup_script)
+# Deploy Kasm Agents
+# kasm_agent = SetupKasmAgent(gcp_network, kasm_helm, get_agent_startup_script, get_proxy_startup_script)

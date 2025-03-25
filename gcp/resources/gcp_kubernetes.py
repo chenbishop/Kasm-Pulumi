@@ -18,6 +18,7 @@ class SetupGcpKubernetes:
                                enable_autopilot=True,
                                network=gcp_network.vpc.id,
                                subnetwork=gcp_network.subnet.id,
+                               deletion_protection = False,
                                release_channel=ClusterReleaseChannelArgs(
                                    channel="STABLE"
                                ),

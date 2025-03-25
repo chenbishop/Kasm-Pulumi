@@ -21,7 +21,6 @@ class SetupGcpDb:
                                             settings=DatabaseInstanceSettingsArgs(
                                                 tier="db-g1-small",
                                                 ip_configuration=DatabaseInstanceSettingsIpConfigurationArgs(
-                                                    # TODO: to be disabled, remove line exporting this too
                                                     ipv4_enabled=True,
                                                     private_network=gcp_network.vpc.id,
                                                     enable_private_path_for_google_cloud_services=True,
@@ -36,9 +35,8 @@ class SetupGcpDb:
                                                 depends_on=[gcp_network.private_vpc_connection],
                                                 ignore_changes=["settings"]))
 
-        # Create record set for DB instance
+        # Create Recordset for DB instance
         self.db_record_set = RecordSet(f"kasm-db-recordset",
-                                       # name=f"db.{data.get('dns_name')}.",
                                        name=f"db.kasm.int.",
                                        type="A",
                                        ttl=300,
@@ -59,8 +57,6 @@ class SetupGcpDb:
                                               opts=ResourceOptions(
                                                   depends_on=[self.db_instance, self.kasm_user]))
 
-        # TODO: to be removed
-        pulumi.export("kasm_db_public_ip", self.db_instance.ip_addresses[0].ip_address)
 
         pulumi.export("kasm_db_name", "kasm")
         pulumi.export("kasm_db_user", "kasmapp")
