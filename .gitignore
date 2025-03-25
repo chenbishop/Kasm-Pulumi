@@ -2,3 +2,5 @@
 /kasm-helm-default/
 /civo/
 /.idea/
+/cert/
+/gcp/Pulumi.dev.yaml
