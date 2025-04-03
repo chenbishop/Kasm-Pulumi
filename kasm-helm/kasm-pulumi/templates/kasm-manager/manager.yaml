@@ -38,6 +38,8 @@ spec:
         - name: {{ .Values.kasmApp.servicesToDeploy.kasmManager.name }}-container
           image: "{{ .Values.kasmApp.servicesToDeploy.kasmManager.image }}:{{ .Values.kasmApp.servicesToDeploy.kasmManager.tag }}"
           env:
+            - name: LOG_LEVEL
+              value: INFO
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:

@@ -22,6 +22,11 @@
           "title": "hostname",
           "type": "string"
         },
+        "ingressClassName": {
+          "description": "## @param global.ingressClassName Global ingress class name to use when generating ingress resource",
+          "title": "ingressClassName",
+          "type": "string"
+        },
         "image": {
           "additionalProperties": false,
           "properties": {

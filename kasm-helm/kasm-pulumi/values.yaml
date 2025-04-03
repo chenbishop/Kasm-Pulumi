@@ -26,7 +26,9 @@ global:
     ##      email: "user@mail.com"
     ##      
     pullCredentials: { }
-
+  ## @param global.ingressClassName Global ingress class name to use when generating ingress resource
+  ##
+  ingressClassName: ""
   ## @param global.hostname Global hostname to use for TLS Certificates and ingress URL
   ##
   hostname: ""
@@ -94,7 +96,7 @@ kasmApp:
       name: kasm-proxy
       addHealthChecks: true
       image: kasmweb/proxy
-      tag: 1.16.0
+      tag: 1.16.1
       replicas: null
       serviceKeepalive: 16
       ## @param kasmApp.servicesToDeploy.kasmProxy.resources Set container requests and limits for different resources like CPU or memory (overrides @param.kasmApp.deploymentSize preset)
@@ -118,7 +120,7 @@ kasmApp:
       name: kasm-db
       addHealthChecks: true
       image: kasmweb/postgres
-      tag: 1.16.0
+      tag: 1.16.1
       storageClassName: ""
       ## @param kasmApp.servicesToDeploy.db.resources Set container requests and limits for different resources like CPU or memory (overrides @param.kasmApp.deploymentSize preset)
       ## Example:
@@ -149,7 +151,7 @@ kasmApp:
       name: kasm-api
       addHealthChecks: true
       image: kasmweb/api
-      tag: 1.16.0
+      tag: 1.16.1
       replicas: null
       ## @param kasmApp.servicesToDeploy.kasmApi.resources Set container requests and limits for different resources like CPU or memory (overrides @param.kasmApp.deploymentSize preset)
       ## Example:
@@ -172,7 +174,7 @@ kasmApp:
       name: kasm-manager
       addHealthChecks: true
       image: kasmweb/manager
-      tag: 1.16.0
+      tag: 1.16.1
       replicas: null
       ## @param kasmApp.servicesToDeploy.kasmManager.resources Set container requests and limits for different resources like CPU or memory (overrides @param.kasmApp.deploymentSize preset)
       ## Example:
@@ -197,7 +199,7 @@ kasmApp:
       deploy: true
       addHealthChecks: true
       image: kasmweb/kasm-guac
-      tag: 1.16.0
+      tag: 1.16.1
       replicas: null
       ## @param kasmApp.servicesToDeploy.kasmGuac.resources Set container requests and limits for different resources like CPU or memory (overrides @param.kasmApp.deploymentSize preset)
       ## Example:
@@ -222,7 +224,7 @@ kasmApp:
       deploy: true
       addHealthChecks: true
       image: kasmweb/rdp-gateway
-      tag: 1.16.0
+      tag: 1.16.1
       replicas: null
       ## @param kasmApp.servicesToDeploy.rdpGateway.resources Set container requests and limits for different resources like CPU or memory (overrides @param.kasmApp.deploymentSize preset)
       ## Example:
@@ -247,7 +249,7 @@ kasmApp:
       deploy: true
       addHealthChecks: true
       image: kasmweb/rdp-https-gateway
-      tag: 1.16.0
+      tag: 1.16.1
       replicas: null
       ## @param kasmApp.servicesToDeploy.rdpHttpsGateway.resources Set container requests and limits for different resources like CPU or memory (overrides @param.kasmApp.deploymentSize preset)
       ## Example:
@@ -272,7 +274,7 @@ kasmApp:
       deploy: true
       addHealthChecks: true
       image: kasmweb/share
-      tag: 1.16.0
+      tag: 1.16.1
       replicas: null
       ## @param kasmApp.servicesToDeploy.kasmShare.resources Set container requests and limits for different resources like CPU or memory (overrides @param.kasmApp.deploymentSize preset)
       ## Example:
