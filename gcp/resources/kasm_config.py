@@ -15,6 +15,7 @@ additional_zone = data.get("additional_kasm_zone")
 class KasmConfig:
     def __init__(self, kubernetes_provider, kasm_helm, kasm_agent, get_kasm_config_script):
 
+        # upstream_auth_address and proxy_hostname environmental variables for different zones
         env_vars = [
                        EnvVarArgs(
                            name=f"{zone['name']}_UPSTREAM_AUTH_ADDRESS",
@@ -27,12 +28,17 @@ class KasmConfig:
                        ) for zone in additional_zone
                    ]
 
+        # number of additional zones environmental variables
         env_vars.append(EnvVarArgs(
             name="ADDITIONAL_ZONES", value=str(len(additional_zone))
         ))
+
+        # primary zone domain URL environmental variables
         env_vars.append(EnvVarArgs(
             name="URL", value=data.get("domain")
         ))
+
+        # total number of agents environmental variables
         total_agent = data.get("agent_number")
         for zone in additional_zone:
             total_agent = total_agent+zone["agent_number"]
@@ -40,6 +46,7 @@ class KasmConfig:
             name="AGENT_NUMBER", value=str(total_agent)
         ))
 
+        # admin password environmental variables, using secret ref
         env_vars.append(EnvVarArgs(
             name="ADMIN_PASS", value_from=EnvVarSourceArgs(
                 secret_key_ref=SecretKeySelectorArgs(
@@ -49,7 +56,26 @@ class KasmConfig:
             )
         ))
 
+        # list of all agents' IP addresses environmental variable
+        all_agent_list = []
+        for agent in kasm_agent.agent_vm:
+            all_agent_list.append(agent.network_interfaces[0].network_ip)
+        for zone in list(kasm_agent.additional_zone_agents.values()):
+            for agent in zone:
+                all_agent_list.append(agent.network_interfaces[0].network_ip)
+        env_vars.append(
+            EnvVarArgs(
+                name="AGENT_LIST",
+                value=pulumi.Output.all(*all_agent_list).apply(
+                    lambda *args: " ".join(str(item) for item in args)  # Convert each item to string before joining
+                )
+        ))
 
+        pulumi.export("test", pulumi.Output.all(*all_agent_list).apply(
+            lambda *args: " ".join(str(item) for item in args)  # Convert each item to string before joining
+        ))
+
+        # Kuberentes job to configure Kasm, this includes enable agents, configuring zones and group settings
         self.job = Job(
             "kasm-config",
             metadata={

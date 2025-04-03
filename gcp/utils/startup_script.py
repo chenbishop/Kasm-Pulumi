@@ -121,16 +121,22 @@ while true; do
     --data-raw '{"token":"'"\$KASM_TOKEN"'","username":"admin@kasm.local"}');
 done;
 
-for server_id in \$(echo "\$response" | jq -r '.servers[].server_id'); do
-  echo "Enabling agent server with ID: \$server_id";
-  curl "https://\$URL/api/admin/update_server" \
-    -k \
-    -s \
-    -H 'accept: application/json' \
-    -H 'content-type: application/json' \
-    -b "username=admin@kasm.local; session_token=\$KASM_TOKEN" \
-    --data-raw '{"target_server":{"server_type":"host","server_id":"'"\$server_id"'","enabled":true},"token":"'"\$KASM_TOKEN"'","username":"admin@kasm.local"}' \
-    > /dev/null 2>&1;
+for server_info in \$(echo "\$response" | jq -r '.servers[] | @base64'); do
+  server_id=\$(echo \$server_info | base64 --decode | jq -r '.server_id')
+  hostname=\$(echo \$server_info | base64 --decode | jq -r '.hostname')
+  if [[ "\$AGENT_LIST" =~ "\$hostname" ]]; then
+    echo "Enabling agent server with ID: \$server_id and hostname: \$hostname";
+      curl "https://\$URL/api/admin/update_server" \
+      -k \
+      -s \
+      -H 'accept: application/json' \
+      -H 'content-type: application/json' \
+      -b "username=admin@kasm.local; session_token=\$KASM_TOKEN" \
+      --data-raw '{"target_server":{"server_type":"host","server_id":"'"\$server_id"'","enabled":true},"token":"'"\$KASM_TOKEN"'","username":"admin@kasm.local"}' \
+      > /dev/null 2>&1;
+  else
+    echo "Skipping server with with ID: \$server_id and hostname: \$hostname, not part of the pulumi deployment.";
+  fi;
 done;
 
 response=\$(curl "https://\$URL/api/admin/get_zones" \

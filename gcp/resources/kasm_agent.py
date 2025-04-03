@@ -17,7 +17,7 @@ class SetupKasmAgent:
                                             manager_token=kasm_helm.manager_token)
 
         # Create Agent VMs For The Primary Zone
-        agent_vm = []
+        self.agent_vm = []
         for agent_index in range(1, int(data.get("agent_number"))+1):
             agent = Instance(f"kasm-primary-zone-agent-{agent_index}",
                                network_interfaces=[{
@@ -38,7 +38,7 @@ class SetupKasmAgent:
                                opts=ResourceOptions(
                                    depends_on=[kasm_helm.helm])
                                )
-            agent_vm.append(agent)
+            self.agent_vm.append(agent)
 
 
         additional_zones = data.get("additional_kasm_zone")
