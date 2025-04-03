@@ -13,23 +13,24 @@ config:
       zone_dns_name: kasm-test.com.
     additional_kasm_zone:
       - name: zoneb
-        cloud_provider: gcp
         region: europe-west1
         zone: europe-west1-b
         proxy_size: e2-standard-2
         agent_size: e2-standard-4
         agent_number: 2
         domain: "zoneb.kasm.kasm-test.com"
+        proxy_domain: "proxy-zoneb.kasm.kasm-test.com"
       - name: zonec
-        cloud_provider: gcp
         region: europe-west3
         zone: europe-west3-a
         proxy_size: e2-standard-2
         agent_size: e2-standard-4
         agent_number: 1
         domain: "zonec.kasm.kasm-test.com"
+        proxy_domain: "proxy-zonec.kasm.kasm-test.com"
     cert: "Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.pem | pulumi config set --path data.cert --secret`"
     cert_key: "Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.key | pulumi config set --path data.cert_key --secret`"
   gcp:project: development-xxx
+
 
 

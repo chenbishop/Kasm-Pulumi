@@ -184,7 +184,7 @@ class SetupGcpNetwork:
             self.additional_zone_proxy_vm_public_ip_address.append(proxy_public_ip_address)
             pulumi.export(f"kasm-{zone_config["name"]}-proxy-public-ip", proxy_public_ip_address.address)
             self.record_set =RecordSet(f"kasm-{zone_config["name"]}-proxy-record-set",
-                                       name=f'proxy.{zone_config["domain"]}.',
+                                       name=f'{zone_config["proxy_domain"]}.',
                                        type="A",
                                        ttl=300,
                                        managed_zone=self.dns.name,

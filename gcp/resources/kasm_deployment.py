@@ -9,6 +9,7 @@ config = Config()
 data = config.require_object("data")
 gcp_config = Config("gcp")
 secrets = config.require_secret_object("data")
+additional_zone = data.get("additional_kasm_zone")
 cert = secrets.apply(lambda secret_obj: secret_obj.get("cert"))
 cert_key = secrets.apply(lambda secret_obj: secret_obj.get("cert_key"))
 
@@ -20,24 +21,29 @@ cert_key = cert_key.apply(lambda v: """######    Place public SSL Key here      
 
 class KasmDeployment:
     def __init__(self, gcp_network, kubernetes_provider, gcp_db):
-
         # Load the zone configuration
         helm_zone_config = []
-        for zone in data.get("additional_kasm_zone"):
+        alt_hostname = [f"*.{data.get("domain")}"]
+        for zone_index in range(len(additional_zone)):
             zone_config = {
-                "name": zone["name"],
-                "cloudProvider": zone["cloud_provider"],
-                "hostName": zone["domain"]
+                "name": additional_zone[zone_index]["name"],
+                "cloudProvider": "gcp",
+                "hostName": additional_zone[zone_index]["domain"],
+                "loadBalancerIP": gcp_network.additional_zone_public_ip_address[zone_index].name
             }
             helm_zone_config.append(zone_config)
+            alt_hostname.append(additional_zone[zone_index]["domain"])
+            alt_hostname.append(additional_zone[zone_index]["proxy_domain"])
+
 
         # Deploying Helm
         self.helm = Release("kasm-helm",
                        ReleaseArgs(
-                           chart="../kasm-helm/kasm-single-zone",
+                           chart="../kasm-helm/kasm-pulumi",
                            values={
                                "global": {
                                    "hostname": data.get("domain"),
+                                   "altHostnames": alt_hostname,
                                    "pulumiDeployment": {
                                        "cloudProvider": "gcp",
                                        "loadBalancerIP": gcp_network.public_ip_address.name,
@@ -54,6 +60,14 @@ class KasmDeployment:
                                    "ingress": {
                                        "cert": cert,
                                        "key": cert_key
+                                   },
+                                   "kasmProxy": {
+                                       "cert": cert,
+                                       "key": cert_key
+                                   },
+                                   "rdpGateway": {
+                                       "cert": cert,
+                                       "key": cert_key
                                    }
                                }
                            },
@@ -64,7 +78,7 @@ class KasmDeployment:
                        ),
                        opts=pulumi.ResourceOptions(
                            provider=kubernetes_provider,
-                           depends_on=[gcp_db.kasm_user, gcp_db.kasm_db]
+                           depends_on=[gcp_db.kasm_user, gcp_db.kasm_db, kubernetes_provider]
                        )
                        )
 
@@ -78,23 +92,33 @@ class KasmDeployment:
                                                     )
 
         # Get the Created SSL Cert Secret
-        self.kasm_nginx_cert = Secret.get(f'kasm/kasm-nginx-proxy-cert',
-                                       self.helm.status.status.apply(lambda v: f'kasm/kasm-nginx-proxy-cert'),
+        self.kasm_ingress_cert = Secret.get(f'kasm/kasm-ingress-cert',
+                                       self.helm.status.status.apply(lambda v: f'kasm/kasm-ingress-cert'),
                                        opts=pulumi.ResourceOptions(
                                            depends_on=[self.helm],
                                            provider=kubernetes_provider,
                                        )
                                        )
+        self.kasm_nginx_proxy_cert = Secret.get(f'kasm/kasm-nginx-proxy-cert',
+                                            self.helm.status.status.apply(lambda v: f'kasm/kasm-nginx-proxy-cert'),
+                                            opts=pulumi.ResourceOptions(
+                                                depends_on=[self.helm],
+                                                provider=kubernetes_provider,
+                                            )
+                                            )
 
         # Exporting Secrets
         self.manager_token = self.kasm_secrets.data["manager-token"].apply(lambda v: base64.b64decode(v).decode('utf-8'))
         self.service_token = self.kasm_secrets.data["service-token"].apply(lambda v: base64.b64decode(v).decode('utf-8'))
-        self.tls_crt = self.kasm_nginx_cert.data["tls.crt"].apply(lambda v: base64.b64decode(v).decode('utf-8'))
-        self.tls_key = self.kasm_nginx_cert.data["tls.key"].apply(lambda v: base64.b64decode(v).decode('utf-8'))
+        self.tls_crt = self.kasm_ingress_cert.data["tls.crt"].apply(lambda v: base64.b64decode(v).decode('utf-8'))
+        self.tls_key = self.kasm_ingress_cert.data["tls.key"].apply(lambda v: base64.b64decode(v).decode('utf-8'))
+        self.nginx_tls_crt = self.kasm_nginx_proxy_cert.data["tls.crt"].apply(lambda v: base64.b64decode(v).decode('utf-8'))
+        self.nginx_tls_key = self.kasm_nginx_proxy_cert.data["tls.key"].apply(lambda v: base64.b64decode(v).decode('utf-8'))
+        self.admin_pass = self.kasm_secrets.data["admin-password"].apply(lambda v: base64.b64decode(v).decode('utf-8'))
         pulumi.export("Kasm URL", data.get("domain"))
         pulumi.export("Kasm Admin User:", "admin@kasm.local")
         pulumi.export("Kasm Un-privileged User", "user@kasm.local")
-        pulumi.export("Kasm Admin Password", self.kasm_secrets.data["admin-password"].apply(lambda v: base64.b64decode(v).decode('utf-8')))
+        pulumi.export("Kasm Admin Password", self.admin_pass)
         pulumi.export("Kasm Manager Token", self.manager_token)
         pulumi.export("Kasm Service Registration Token", self.service_token)
         pulumi.export("Kasm Redis Password", self.kasm_secrets.data["redis-password"].apply(lambda v: base64.b64decode(v).decode('utf-8')))

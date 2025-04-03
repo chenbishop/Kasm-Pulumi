@@ -94,11 +94,8 @@ class SetupKasmAgent:
                                  },
                              },
                              metadata_startup_script=proxy_startup_script,
+                             can_ip_forward=True,
                              opts=ResourceOptions(
-                                 depends_on=[kasm_helm.helm])
+                                 depends_on=[kasm_helm.helm, kasm_helm.kasm_secrets])
                              )
             self.additional_zone_proxies.append(proxy)
-
-
-
-

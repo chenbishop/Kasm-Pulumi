@@ -14,8 +14,11 @@ Before using the Pulumi script, ensure that the following requirements are met:
 
 ## Authenticate with GCP
 ```bash
+gcloud auth login
 gcloud auth application-default login
 ```
+
+Note: make sure both auth commands are passed.
 
 ## Clone Git repo
 TODO: to be changed
@@ -50,58 +53,56 @@ Modify `Pulumi.dev.yaml` as follows:
 **agent_size**: The instance size for Kasm agents in the primary zone. Example: `e2-standard-4`.
 **agent_number**: The number of Kasm agent instances to deploy in the primary zone. Example: `2`.
 **agent_disk_size**: The disk size (in GB) for each Kasm agent instance across **all** zones. Example: `100`.
+**cert**: Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.pem | pulumi config set --path data.cert --secret`
+**cert_key**: Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.key | pulumi config set --path data.cert_key --secret`
+
 
 ### kasm-gcp:data.cloud_dns_zone
 **create**: Set to `true` if you do not have a Cloud DNS zone already, the Pulumi script will create a new Cloud zone for you and you need to manually link your domain to this DNS zone. Set to `false` if you already have a cloud dns zone (thats already connected to your domain), the cloud dns will not be created, instead we will use the existing one.
-**zone_name**: The name of the Cloud DNS zone to be used (e.g., `kasm-test-com`). the config is only used when `create=false`
-**zone_dns_name**: The DNS name for the Cloud DNS zone (e.g., `kasm-test.com.`). the config is only used when `create=true`
+**zone_name**: The name of the GCP Cloud DNS zone to be used (e.g., `kasm-test-com`). the config is only used when `create=false`
+**zone_dns_name**: The GCP DNS name for the Cloud DNS zone (e.g., `kasm-test.com.`). the config is only used when `create=true`
 
 ### kasm-gcp:data.additional_kasm_zone
 A list of additional Kasm zones to be deployed. Each zone will have its own set of configurations:
-**name**: A unique name for each additional Kasm zone (e.g., `zoneb`, `zonec`).
+**name**: A unique identifier for each additional Kasm zone (e.g., `zoneb`, `zonec`).
+**region**: The GCP region where the additional Kasm zone will be deployed (e.g., `europe-west1`). Each additional zone should reside in its own unique region.
+**zone**: The GCP availability zone within the specified region for the additional Kasm zone (e.g., `europe-west1-b`).
+**proxy_size**: The instance size for the Kasm proxy server in the additional zone. Example: `e2-standard-2`.
+**agent_size**: The instance size for the Kasm agent servers in the additional zone. Example: `e2-standard-4`.
+**agent_number**: The number of Kasm agent instances to be deployed in the additional zone. Example: `2`.
+**domain**: The domain name for the additional Kasm zone. Example: `zoneb.kasm.kasm-test.com`.
+**proxy_domain**: The domain name for the Kasm proxy server in the additional zone. Example: `proxy-zoneb.kasm.kasm-test.com`
 
-**cloud_provider**: The cloud provider to use for the additional zone. Set to gcp for Google Cloud Platform.
-
-**region**: The GCP region for the additional kasm zone (e.g., `europe-west1`).
-
-**zone**: The GCP availability zone for the additional zone (e.g., `europe-west1-b`).
-
-**proxy_size**: The instance size for Kasm proxies in the additional zone. Example: e2-standard-2.
-
-**agent_size**: The instance size for Kasm agents in the additional zone. Example: `e2-standard-4`.
-**agent_number**: The number of Kasm agent instances to deploy in the additional zone. Example: `2`.
-
-domain: The domain name for the additional Kasm zone (e.g., zoneb.kasm.kasm-test.com).
-
-
-
-
-
-
-
-
-
-
-
-
-
-Cert:
-1. on default generate self sign cert but if you would like to use your own cert
-2. cert: "Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.pem | pulumi config set --path data.cert --secret`"
-3. key: "Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.key | pulumi config set --path data.cert_key --secret`"
-
-
-
-pre-steps:
-1. dns zone, if already have one, cloud_dns_zone.create set to false (default is true) and modify the cloud_dns_zone.zone_name and cloud_dns_zone.zone_dns_name
-2. if dont have one, make sure cloud_dns_zone.create is true and modify cloud_dns_zone.zone_name and cloud_dns_zone.zone_dns_name and point your cloud domain to the created dns once the pulumi script finishes
-
-additional:
+## Pulumi Script Notes
 1. postgres DB have the flag deletion_protection=False and deletion_protection_enabled=False, change this to true in gcp_db.py base on your preference
 2. GKE cluster have the flag deletion_protection= False, change this in gcp_kubernetes.py based on your preference
 
-Input:
-1. agent_disk_size: in GB and recommend 100 GB
+## Execute Pulumi Script
+Once you have finished configurating the Pulumi stack, use command `pulumi up --stack dev` to execute the Pulumi script. This script may take 20-30 minutes to complete.
+
+Note: it can take up to 10 minutes for GCP to create the corresponding loadbanlancer for the ingress after the Pulumi script finished executing.
+
+## Point Cloud Domain to the created DNS Zone
+If you set `kasm-gcp:data.cloud_dns_zone.create=true`, you need to point you domain to the created GCP DNS zone. If you set `kasm-gcp:data.cloud_dns_zone.create=false` and your domain already pointed to the defined `kasm-gcp:data.cloud_dns_zone`, you can ignore this step.
+
+## Config Kasm
+Once you the Pulumi script is finished, you should be able to access your Kasm admin at https://{domain}
+To get the login credentials, execute the command `pulumi stack output --show-secrets`, and use the values of `Kasm Admin User` and `Kasm Admin Password`
+
+### Enable the Agent
+In the Kasm admin console, select **Infrastructure > Docker Agents** and using the arrow menu select **Edit** on the agent you just created. Make sure **Enabled** is selected and click **Save**.
+
+### Config Kasm Zone Proxy
+In the Kasm admin console, select **Infrastructure > Docker Agents**
+
+### Install a Workspace
+In the Kasm admin console, select **Workspaces > Registry** and choose the workspace image you would like to install.
+
+*Note: The agent may take a few minutes to download the selected workspace image before a session can be started.*
+
+### Start A Kasm Session
+Navigate to the **WORKSPACES** tab at the top of the page and start your first Kasm session once the workspace image is ready!
 
 
-Service account permissions?
+
+
