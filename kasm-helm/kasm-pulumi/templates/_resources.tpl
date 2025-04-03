@@ -24,20 +24,6 @@ Example usage:
       "medium" 6
       "large" 12
     )
-    "db" (dict
-      "small" (dict 
-        "requests" (dict "cpu" "500m" "memory" "128Mi" "ephemeral-storage" "50Mi")
-        "limits" (dict "cpu" "750m" "memory" "384Mi" "ephemeral-storage" "2Gi")
-      )
-      "medium" (dict 
-        "requests" (dict "cpu" "512m" "memory" "512Mi" "ephemeral-storage" "50Mi")
-        "limits" (dict "cpu" "1.5" "memory" "2048Mi" "ephemeral-storage" "2Gi")
-      )
-      "large" (dict 
-        "requests" (dict "cpu" "512m" "memory" "2048Mi" "ephemeral-storage" "50Mi")
-        "limits" (dict "cpu" "4.0" "memory" "8192Mi" "ephemeral-storage" "2Gi")
-      )
-    )
     "api" (dict
       "small" (dict 
         "requests" (dict "cpu" "150m" "memory" "64Mi" "ephemeral-storage" "50Mi")

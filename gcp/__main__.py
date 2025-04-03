@@ -21,7 +21,7 @@ gcp_db = SetupGcpDb(gcp_network, db_password)
 # Crete GKE Cluster
 gcp_cluster = SetupGcpKubernetes(gcp_network)
 
-# # Deploy Kasm Helm
+# Deploy Kasm Helm
 kasm_helm = KasmDeployment(gcp_network, gcp_cluster.cluster_provider, gcp_db)
 
 # Deploy Kasm Agents

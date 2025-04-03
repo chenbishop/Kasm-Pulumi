@@ -10,11 +10,6 @@ Example usage:
       "medium" 2
       "large" 4
     )
-    "db" (dict
-      "small" 1
-      "medium" 1
-      "large" 1
-    )
     "api" (dict
       "small" 3
       "medium" 3

@@ -1,6 +1,6 @@
 from pulumi import Config
 from pulumi_kubernetes.batch.v1 import Job, JobSpecArgs
-from pulumi_kubernetes.core.v1 import PodTemplateSpecArgs, PodSpecArgs, ContainerArgs, EnvVarArgs
+from pulumi_kubernetes.core.v1 import PodTemplateSpecArgs, PodSpecArgs, ContainerArgs, EnvVarArgs, EnvVarSourceArgs, SecretKeySelectorArgs
 import pulumi
 
 
@@ -14,9 +14,6 @@ additional_zone = data.get("additional_kasm_zone")
 
 class KasmConfig:
     def __init__(self, kubernetes_provider, kasm_helm, kasm_agent, get_kasm_config_script):
-        # pulumi.export("1", str(len(additional_zone)))
-        # pulumi.export("2", data.get("domain"))
-        # pulumi.export("3", zone_data)
 
         env_vars = [
                        EnvVarArgs(
@@ -42,8 +39,14 @@ class KasmConfig:
         env_vars.append(EnvVarArgs(
             name="AGENT_NUMBER", value=str(total_agent)
         ))
+
         env_vars.append(EnvVarArgs(
-            name="ADMIN_PASS", value=kasm_helm.admin_pass
+            name="ADMIN_PASS", value_from=EnvVarSourceArgs(
+                secret_key_ref=SecretKeySelectorArgs(
+                    name="kasm-secrets",
+                    key="admin-password",
+        )
+            )
         ))
 
 
