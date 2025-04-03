@@ -11,8 +11,8 @@ metadata:
   annotations:
     kubernetes.io/ingress.global-static-ip-name: {{ .loadBalancerIP }}
 spec:
-{{- if .Values.global.ingressClassName }}
-  ingressClassName: {{ .Values.global.ingressClassName }}
+{{- if $.Values.global.ingressClassName }}
+  ingressClassName: {{ $.Values.global.ingressClassName }}
 {{- end }}
   tls:
   - hosts:
