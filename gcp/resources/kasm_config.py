@@ -52,11 +52,9 @@ class KasmConfig:
                 secret_key_ref=SecretKeySelectorArgs(
                     name="kasm-secrets",
                     key="admin-password",
-        )
-            )
-        ))
+        ))))
 
-        # list of all agents' IP addresses environmental variable
+        # all agents' IP addresses environmental variable
         all_agent_list = []
         for agent in kasm_agent.agent_vm:
             all_agent_list.append(agent.network_interfaces[0].network_ip)
@@ -69,10 +67,6 @@ class KasmConfig:
                 value=pulumi.Output.all(*all_agent_list).apply(
                     lambda *args: " ".join(str(item) for item in args)  # Convert each item to string before joining
                 )
-        ))
-
-        pulumi.export("test", pulumi.Output.all(*all_agent_list).apply(
-            lambda *args: " ".join(str(item) for item in args)  # Convert each item to string before joining
         ))
 
         # Kuberentes job to configure Kasm, this includes enable agents, configuring zones and group settings
@@ -99,4 +93,3 @@ class KasmConfig:
             opts=pulumi.ResourceOptions(provider=kubernetes_provider,
                                         depends_on=[kasm_helm.helm])
         )
-
