@@ -20,7 +20,7 @@ cert_key = cert_key.apply(lambda v: """######    Place public SSL Key here      
 ######  Leave empty for Helm to generate ######""" if "Leave it as it is for Helm to generate" in v else v)
 
 class KasmDeployment:
-    def __init__(self, gcp_network, kubernetes_provider, gcp_db):
+    def __init__(self, gcp_network, gcp_cluster, gcp_db):
         # Load the zone configuration
         helm_zone_config = []
         alt_hostname = [f"*.{data.get("domain")}"]
@@ -77,8 +77,8 @@ class KasmDeployment:
                            timeout=1800
                        ),
                        opts=pulumi.ResourceOptions(
-                           provider=kubernetes_provider,
-                           depends_on=[gcp_db.kasm_user, gcp_db.kasm_db, kubernetes_provider]
+                           provider=gcp_cluster.cluster_provider,
+                           depends_on=[gcp_db.kasm_user, gcp_db.kasm_db, gcp_cluster.cluster, gcp_cluster.cluster_provider]
                        )
                        )
 
@@ -87,7 +87,7 @@ class KasmDeployment:
                                        self.helm.status.status.apply(lambda v: f'kasm/kasm-secrets'),
                                                     opts=pulumi.ResourceOptions(
                                                         depends_on=[self.helm],
-                                                        provider=kubernetes_provider,
+                                                        provider=gcp_cluster.cluster_provider,
                                                     )
                                                     )
 
@@ -96,14 +96,14 @@ class KasmDeployment:
                                        self.helm.status.status.apply(lambda v: f'kasm/kasm-ingress-cert'),
                                        opts=pulumi.ResourceOptions(
                                            depends_on=[self.helm],
-                                           provider=kubernetes_provider,
+                                           provider=gcp_cluster.cluster_provider,
                                        )
                                        )
         self.kasm_nginx_proxy_cert = Secret.get(f'kasm/kasm-nginx-proxy-cert',
                                             self.helm.status.status.apply(lambda v: f'kasm/kasm-nginx-proxy-cert'),
                                             opts=pulumi.ResourceOptions(
                                                 depends_on=[self.helm],
-                                                provider=kubernetes_provider,
+                                                provider=gcp_cluster.cluster_provider,
                                             )
                                             )
 

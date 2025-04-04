@@ -13,7 +13,7 @@ additional_zone = data.get("additional_kasm_zone")
 
 
 class KasmConfig:
-    def __init__(self, kubernetes_provider, kasm_helm, kasm_agent, get_kasm_config_script):
+    def __init__(self, gcp_cluster, kasm_helm, kasm_agent, get_kasm_config_script):
 
         # upstream_auth_address and proxy_hostname environmental variables for different zones
         env_vars = [
@@ -90,6 +90,6 @@ class KasmConfig:
                     )
                 ),
             ),
-            opts=pulumi.ResourceOptions(provider=kubernetes_provider,
+            opts=pulumi.ResourceOptions(provider=gcp_cluster.cluster_provider,
                                         depends_on=[kasm_helm.helm])
         )

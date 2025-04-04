@@ -95,7 +95,7 @@ class SetupGcpNetwork:
         # Public IP for GKE Ingress Load Balancer
         self.public_ip_address = GlobalAddress("kasm-primary-zone-loadbalancer-ip",
                                                name="kasm-primary-zone-loadbalancer-ip")
-        pulumi.export("kasm-primary-zone-loadbalancer-ip", self.public_ip_address.address)
+        # pulumi.export("kasm-primary-zone-loadbalancer-ip", self.public_ip_address.address)
 
         # Create or get the GCP Cloud DNS zone
         self.dns = ""
@@ -121,9 +121,9 @@ class SetupGcpNetwork:
         self.private_vpc_connection = Connection(f"kasm-db-connection",
                                                  network=self.vpc.id,
                                                  service="servicenetworking.googleapis.com",
+                                                 deletion_policy="ABANDON",
                                                  reserved_peering_ranges=[
                                                      self.private_ip_address.name],
-                                                 opts=ResourceOptions(depends_on=[self.private_ip_address])
                                                  )
 
         # Additional Zone Resources
@@ -169,7 +169,7 @@ class SetupGcpNetwork:
             public_ip_address = GlobalAddress(f'kasm-{zone_config["name"]}-loadbalancer-ip',
                                               name=f'kasm-{zone_config["name"]}-loadbalancer-ip')
             self.additional_zone_public_ip_address.append(public_ip_address)
-            pulumi.export(f"kasm-{zone_config["name"]}-ingress-loadbalancer-ip", public_ip_address.address)
+            # pulumi.export(f"kasm-{zone_config["name"]}-ingress-loadbalancer-ip", public_ip_address.address)
             self.record_set =RecordSet(f"kasm-{zone_config["name"]}-record-set",
                                        name=f'{zone_config["domain"]}.',
                                        type="A",
@@ -182,7 +182,7 @@ class SetupGcpNetwork:
                                               name=f'kasm-{zone_config["name"]}-proxy-public-ip',
                                               region=zone_config["region"])
             self.additional_zone_proxy_vm_public_ip_address.append(proxy_public_ip_address)
-            pulumi.export(f"kasm-{zone_config["name"]}-proxy-public-ip", proxy_public_ip_address.address)
+            # pulumi.export(f"kasm-{zone_config["name"]}-proxy-public-ip", proxy_public_ip_address.address)
             self.record_set =RecordSet(f"kasm-{zone_config["name"]}-proxy-record-set",
                                        name=f'{zone_config["proxy_domain"]}.',
                                        type="A",
