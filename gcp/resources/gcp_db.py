@@ -20,7 +20,7 @@ class SetupGcpDb:
                                             deletion_protection=False,
                                             region=data.get("region"),
                                             settings=DatabaseInstanceSettingsArgs(
-                                                tier="db-g1-small",
+                                                tier=data.get("db_tier"),
                                                 ip_configuration=DatabaseInstanceSettingsIpConfigurationArgs(
                                                     ipv4_enabled=True,
                                                     private_network=gcp_network.vpc.id,

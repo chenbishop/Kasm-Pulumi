@@ -1,3 +1,4 @@
+from charset_normalizer.md import annotations
 from pulumi import Config
 from pulumi_kubernetes.batch.v1 import Job, JobSpecArgs
 from pulumi_kubernetes.core.v1 import PodTemplateSpecArgs, PodSpecArgs, ContainerArgs, EnvVarArgs, EnvVarSourceArgs, SecretKeySelectorArgs
@@ -74,7 +75,10 @@ class KasmConfig:
             "kasm-config",
             metadata={
                 "name": "kasm-config",
-                "namespace": "kasm"
+                "namespace": "kasm",
+                "annotations": {
+                    "pulumi.com/skipAwait": "true"
+                }
             },
             spec=JobSpecArgs(
                 backoff_limit=4,

@@ -68,6 +68,7 @@ Modify `Pulumi.dev.yaml` as follows:
 **agent_size**: The instance size for Kasm agents in the primary zone. Example: `e2-standard-4`.
 **agent_number**: The number of Kasm agent instances to deploy in the primary zone. Example: `2`.
 **agent_disk_size**: The disk size (in GB) for each Kasm agent instance across **all** zones. Example: `100`.
+**db_tier**: The tier for the GCP PostgreSQL database is specified as `db-custom-{core_count}-{RAM_in_MB}`. We recommend using at least 2 cores and 3840 MB of RAM for optimal performance. For example, `db-custom-2-3840` represents a database tier with 2 CPU cores and 3840 MB of RAM.
 **cert**: Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.pem | pulumi config set --path data.cert --secret`
 **cert_key**: Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.key | pulumi config set --path data.cert_key --secret`
 
@@ -102,9 +103,9 @@ A list of additional Kasm zones to be deployed. Each zone will have its own set 
 2. GKE cluster have the flag deletion_protection= False, change this in gcp_kubernetes.py based on your preference
 
 ## Execute Pulumi Script
-Once you have finished configurating the Pulumi stack, use command `pulumi up --stack dev` to execute the Pulumi script. This script may take 20-30 minutes to complete.
+Once you have finished configuring the Pulumi stack, use command `pulumi up --stack dev` to execute the Pulumi script. This script may take 20-30 minutes to complete.
 
-Note: it can take up to 10 minutes for GCP to create the corresponding loadbanlancer for the ingress after the Pulumi script finished executing.
+**Note**: It may take up to 10 minutes for GCP to provision the load balancer for the ingress after the Pulumi script completes execution. Kasm will not be accessible until the ingress load balancer is fully created.
 
 ## Point Cloud Domain to the created DNS Zone
 If you set `kasm-gcp:data.cloud_dns_zone.create=true`, you need to point you domain to the created GCP DNS zone. If you set `kasm-gcp:data.cloud_dns_zone.create=false` and your domain already pointed to the defined `kasm-gcp:data.cloud_dns_zone`, you can ignore this step.
