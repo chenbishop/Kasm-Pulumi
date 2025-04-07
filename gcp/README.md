@@ -101,7 +101,9 @@ A list of additional Kasm zones to be deployed. Each zone will have its own set 
 ## Pulumi Script Notes
 1. By default, the GCP Cloud PostgreSQL database has a disk size of 10GB, with `automatic storage increase` enabled. This allows GCP to manage the database size automatically. If you'd like to modify this behavior, you can manually adjust the settings in the `gcp_db.py` script.
 2. The GCP Cloud PostgreSQL database has the flags `deletion_protection=False` and `deletion_protection_enabled=False`. You can change these to `True` in the `gcp_db.py` script based on your preference.
-2. The GKE cluster has the flag `deletion_protection=False`. You can update this value in the `gcp_kubernetes.py` script according to your preference.
+3. The GKE cluster has the flag `deletion_protection=False`. You can update this value in the `gcp_kubernetes.py` script according to your preference. 
+4. The GKE cluster has the flag `enable_autopilot=True`, which enables the GKE Autopilot feature. We highly recommend using Autopilot, as it simplifies cluster maintenance and automatically manages node scaling. If you prefer not to use Autopilot, you can modify the `gcp_kubernetes.py` script to create a custom node pool instead.
+
 
 ## Execute Pulumi Script
 Once you have finished configuring the Pulumi stack, use command `pulumi up --stack dev` to execute the Pulumi script. This script may take 20-30 minutes to complete.
