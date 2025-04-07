@@ -72,6 +72,7 @@ Modify `Pulumi.dev.yaml` as follows:
 **cert_key**: Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.key | pulumi config set --path data.cert_key --secret`
 
 **Note**: We highly recommend using the following DNS structure for a multi-zone Kasm setup:
+- Assume Kasm domain is `kasm.kasm-test.com`.
 - Additional zone DNS names should be subdomains of the Kasm domain (e.g., `zoneb.kasm.kasm-test.com`).
 - Additional zone proxy DNS names should also be subdomains of the Kasm domain (e.g., `proxy-zoneb.kasm.kasm-test.com`), at the same level as the additional zone DNS names.
 
@@ -119,6 +120,23 @@ In the Kasm admin console, select **Workspaces > Registry** and choose the works
 
 ## Start A Kasm Session
 Navigate to the **WORKSPACES** tab at the top of the page and start your first Kasm session once the workspace image is ready!
+
+## Accessing Your GKE Cluster with kubectl
+Once the Pulumi script is completed, follow these steps to access your GKE cluster using kubectl.
+
+### Configure kubectl to Use the Cluster Credentials
+Run the following command to retrieve the credentials for your GKE cluster:
+```bash
+gcloud container clusters get-credentials kasm-cluster --region={GCP Region}
+```
+Replace {GCP Region} with the region where your Kasm primary zone is configured. This command sets up kubectl to use the necessary credentials for interacting with your cluster.
+
+### Verify Cluster Access
+After configuring kubectl, you can start querying your GKE cluster. For instance, to list the pods in the kasm namespace, use:
+```bash
+kubectl -n kasm get pods
+```
+
 
 ## Created Pulumi Resources
 ### GCP Networking
