@@ -99,8 +99,9 @@ A list of additional Kasm zones to be deployed. Each zone will have its own set 
 - **proxy_domain**: The domain name for the Kasm proxy server in the additional zone. Example: `proxy-zoneb.kasm.kasm-test.com`
 
 ## Pulumi Script Notes
-1. postgres DB have the flag deletion_protection=False and deletion_protection_enabled=False, change this to true in gcp_db.py base on your preference
-2. GKE cluster have the flag deletion_protection= False, change this in gcp_kubernetes.py based on your preference
+1. By default, the GCP Cloud PostgreSQL database has a disk size of 10GB, with `automatic storage increase` enabled. This allows GCP to manage the database size automatically. If you'd like to modify this behavior, you can manually adjust the settings in the `gcp_db.py` script.
+2. The GCP Cloud PostgreSQL database has the flags `deletion_protection=False` and `deletion_protection_enabled=False`. You can change these to `True` in the `gcp_db.py` script based on your preference.
+2. The GKE cluster has the flag `deletion_protection=False`. You can update this value in the `gcp_kubernetes.py` script according to your preference.
 
 ## Execute Pulumi Script
 Once you have finished configuring the Pulumi stack, use command `pulumi up --stack dev` to execute the Pulumi script. This script may take 20-30 minutes to complete.
