@@ -188,7 +188,7 @@ To delete the created Pulumi stack along with all the associated resources, run 
 pulumi down --stack dev
 ```
 
-**Note**: Due to a limitation with GCP's Network Endpoint Group (NEG), you may encounter the following error during pulumi down:
+**Note**: Due to the limitation with GCP's Network Endpoint Group (NEG), you may encounter the following error during pulumi down when deleting the VPC:
 ```bas
 sdk-v2/provider2.go:515: sdk.helper_schema: Error waiting for Deleting Network: The network resource 'projects/xxx/global/networks/kasm' is already being used by 'projects/xxx/zones/xxx/networkEndpointGroups/xxx'
 ```
