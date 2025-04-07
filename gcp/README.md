@@ -61,16 +61,16 @@ pulumi config set gcp:project <your-project-id>
 Modify `Pulumi.dev.yaml` as follows:
 
 ### kasm-gcp:data
-**region**: The GCP region for the primary Kasm zone. Example: `europe-west2`.
-**zone**: The GCP zone for the primary Kasm zone. Example: `europe-west2-a`.
-**agent_enable_ssh**: Set to `true` to enable SSH access for Kasm agent and proxy VMs, otherwise set to `false`.
-**domain**: The domain to be used for the primary Kasm zone (e.g. `kasm.kasm-test.com`). The domain needs to be owned by you.
-**agent_size**: The instance size for Kasm agents in the primary zone. Example: `e2-standard-4`.
-**agent_number**: The number of Kasm agent instances to deploy in the primary zone. Example: `2`.
-**agent_disk_size**: The disk size (in GB) for each Kasm agent instance across **all** zones. Example: `100`.
-**db_tier**: The tier for the GCP PostgreSQL database is specified as `db-custom-{core_count}-{RAM_in_MB}`. We recommend using at least 2 cores and 3840 MB of RAM for optimal performance. For example, `db-custom-2-3840` represents a database tier with 2 CPU cores and 3840 MB of RAM.
-**cert**: Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.pem | pulumi config set --path data.cert --secret`
-**cert_key**: Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.key | pulumi config set --path data.cert_key --secret`
+- **region**: The GCP region for the primary Kasm zone. Example: `europe-west2`.
+- **zone**: The GCP zone for the primary Kasm zone. Example: `europe-west2-a`.
+- **agent_enable_ssh**: Set to `true` to enable SSH access for Kasm agent and proxy VMs, otherwise set to `false`.
+- **domain**: The domain to be used for the primary Kasm zone (e.g. `kasm.kasm-test.com`). The domain needs to be owned by you.
+- **agent_size**: The instance size for Kasm agents in the primary zone. Example: `e2-standard-4`.
+- **agent_number**: The number of Kasm agent instances to deploy in the primary zone. Example: `2`.
+- **agent_disk_size**: The disk size (in GB) for each Kasm agent instance across **all** zones. Example: `100`.
+- **db_tier**: The tier for the GCP PostgreSQL database is specified as `db-custom-{core_count}-{RAM_in_MB}`. We recommend using at least 2 cores and 3840 MB of RAM for optimal performance. For example, `db-custom-2-3840` represents a database tier with 2 CPU cores and 3840 MB of RAM.
+- **cert**: Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.pem | pulumi config set --path data.cert --secret`
+- **cert_key**: Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.key | pulumi config set --path data.cert_key --secret`
 
 **Note**: We highly recommend using the following DNS structure for a multi-zone Kasm setup:
 - Assume Kasm domain is `kasm.kasm-test.com`.
@@ -83,20 +83,20 @@ The multi-zone setup must have a valid SSL certificate, and the provided certifi
 - Additional zone proxy DNS names (e.g., `proxy-zoneb.kasm.kasm-test.com`, `proxy-zonec.kasm.kasm-test.com`)
 
 ### kasm-gcp:data.cloud_dns_zone
-**create**: Set to `true` if you do not have a Cloud DNS zone already, the Pulumi script will create a new Cloud zone for you and you need to manually link your domain to this DNS zone. Set to `false` if you already have a cloud dns zone (thats already connected to your domain), the cloud dns will not be created, instead we will use the existing one.
-**zone_name**: The name of the GCP Cloud DNS zone to be used (e.g., `kasm-test-com`). the config is only used when `create=false`
-**zone_dns_name**: The GCP DNS name for the Cloud DNS zone (e.g., `kasm-test.com.`). the config is only used when `create=true`
+- **create**: Set to `true` if you do not have a Cloud DNS zone already, the Pulumi script will create a new Cloud zone for you and you need to manually link your domain to this DNS zone. Set to `false` if you already have a cloud dns zone (thats already connected to your domain), the cloud dns will not be created, instead we will use the existing one.
+- **zone_name**: The name of the GCP Cloud DNS zone to be used (e.g., `kasm-test-com`). the config is only used when `create=false`
+- **zone_dns_name**: The GCP DNS name for the Cloud DNS zone (e.g., `kasm-test.com.`). the config is only used when `create=true`
 
 ### kasm-gcp:data.additional_kasm_zone
 A list of additional Kasm zones to be deployed. Each zone will have its own set of configurations:
-**name**: A unique identifier for each additional Kasm zone (e.g., `zoneb`, `zonec`).
-**region**: The GCP region where the additional Kasm zone will be deployed (e.g., `europe-west1`). Each additional zone should reside in its own unique region.
-**zone**: The GCP availability zone within the specified region for the additional Kasm zone (e.g., `europe-west1-b`).
-**proxy_size**: The instance size for the Kasm proxy server in the additional zone. Example: `e2-standard-2`.
-**agent_size**: The instance size for the Kasm agent servers in the additional zone. Example: `e2-standard-4`.
-**agent_number**: The number of Kasm agent instances to be deployed in the additional zone. Example: `2`.
-**domain**: The domain name for the additional Kasm zone. Example: `zoneb.kasm.kasm-test.com`.
-**proxy_domain**: The domain name for the Kasm proxy server in the additional zone. Example: `proxy-zoneb.kasm.kasm-test.com`
+- **name**: A unique identifier for each additional Kasm zone (e.g., `zoneb`, `zonec`).
+- **region**: The GCP region where the additional Kasm zone will be deployed (e.g., `europe-west1`). Each additional zone should reside in its own unique region.
+- **zone**: The GCP availability zone within the specified region for the additional Kasm zone (e.g., `europe-west1-b`).
+- **proxy_size**: The instance size for the Kasm proxy server in the additional zone. Example: `e2-standard-2`.
+- **agent_size**: The instance size for the Kasm agent servers in the additional zone. Example: `e2-standard-4`.
+- **agent_number**: The number of Kasm agent instances to be deployed in the additional zone. Example: `2`.
+- **domain**: The domain name for the additional Kasm zone. Example: `zoneb.kasm.kasm-test.com`.
+- **proxy_domain**: The domain name for the Kasm proxy server in the additional zone. Example: `proxy-zoneb.kasm.kasm-test.com`
 
 ## Pulumi Script Notes
 1. postgres DB have the flag deletion_protection=False and deletion_protection_enabled=False, change this to true in gcp_db.py base on your preference
