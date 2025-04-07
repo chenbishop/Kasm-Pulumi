@@ -177,3 +177,17 @@ The table below provides an overview of the non-GCP resources that are created:
 | **Release**           | Kasm Helm chart deployed into the created GKE cluster for hosting Kasm services.      |
 | **Job**               | Kubernetes job for configuring Kasm, including enabling agents and other setup tasks. |
 
+
+## Delete Pulumi Stack
+To delete the created Pulumi stack along with all the associated resources, run the following command:
+
+```bash
+pulumi down --stack dev
+```
+
+**Note**: Due to a limitation with GCP's Network Endpoint Group (NEG), you may encounter the following error during pulumi down:
+```bas
+sdk-v2/provider2.go:515: sdk.helper_schema: Error waiting for Deleting Network: The network resource 'projects/xxx/global/networks/kasm' is already being used by 'projects/xxx/zones/xxx/networkEndpointGroups/xxx'
+```
+If this occurs, manually delete the NEG(s) associated with the kasm VPC network in your GCP project and then re-run `pulumi down`.
+
