@@ -11,7 +11,7 @@ Before using the Pulumi script, ensure that the following requirements are met:
 - **Google Cloud SDK**: Install the [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) to authenticate and configure your GCP environment.
 - **Pulumi GCP Provider**: You will need to install the Pulumi GCP and Pulumi Kubernetes providers.
 
-Further, You will need to have the following info ready before proceed further
+Additionally, you will need the following information ready before proceeding further:
 - **Kasm Hosting Domain**: The domain where Kasm will be hosted, e.g., `kasm.kasm-test.com`.
 - **GCP Project**: The GCP project where you want to deploy the Pulumi resources.
 - **GCP Region**: The GCP region where Kasm will be hosted.
@@ -25,7 +25,7 @@ Further, You will need to have the following info ready before proceed further
     - Additional zone proxy DNS name (e.g., `proxy-zoneb.kasm.kasm-test.com` and `proxy-zonec.kasm.kasm-test.com`)
 - **Cloud DNS Creation**:
     - **If Yes**: If you want the Pulumi script to create Cloud DNS, you will need to point your domain to the created Cloud DNS after the script completes and provide your domain’s DNS name in the Pulumi configuration.
-    - **If No**: If you do not want the Pulumi script to create Cloud DNS, you must provide the name of your existing GCP Cloud DNS.
+    - **If No**: If you prefer not to have the Pulumi script create Cloud DNS, you must provide the name of your existing GCP Cloud DNS zone.
 
 ## Authenticate with GCP
 ```bash
@@ -33,7 +33,7 @@ gcloud auth login
 gcloud auth application-default login
 ```
 
-Note: make sure both auth commands are passed.
+**Note:** Make sure both authentication commands are successfully executed.
 
 ## Clone Git repo
 TODO: to be changed
@@ -58,7 +58,7 @@ pulumi config set gcp:project <your-project-id>
 ```
 
 ## Config Pulumi Stack
-Modify `Pulumi.dev.yaml` as follows:
+Configure the `Pulumi.dev.yaml` file by modifying it as follows:
 
 ### kasm-gcp:data
 - **region**: The GCP region for the primary Kasm zone. Example: `europe-west2`.
@@ -99,14 +99,14 @@ A list of additional Kasm zones to be deployed. Each zone will have its own set 
 - **proxy_domain**: The domain name for the Kasm proxy server in the additional zone. Example: `proxy-zoneb.kasm.kasm-test.com`
 
 ## Pulumi Script Notes
-1. By default, the GCP Cloud PostgreSQL database has a disk size of 10GB, with `automatic storage increase` enabled. This allows GCP to manage the database size automatically. If you'd like to modify this behavior, you can manually adjust the settings in the `gcp_db.py` script.
+1. By default, the GCP Cloud PostgreSQL database has a disk size of 10GB with `automatic storage increase` enabled, which allows GCP to manage the database size dynamically. This allows GCP to manage the database size automatically. If you'd like to modify this behavior, you can manually adjust the settings in the `gcp_db.py` script.
 2. The GCP Cloud PostgreSQL database has the flags `deletion_protection=False` and `deletion_protection_enabled=False`. You can change these to `True` in the `gcp_db.py` script based on your preference.
 3. The GKE cluster has the flag `deletion_protection=False`. You can update this value in the `gcp_kubernetes.py` script according to your preference. 
 4. The GKE cluster has the flag `enable_autopilot=True`, which enables the GKE Autopilot feature. We highly recommend using Autopilot, as it simplifies cluster maintenance and automatically manages node scaling. If you prefer not to use Autopilot, you can modify the `gcp_kubernetes.py` script to create a custom node pool instead.
 
 
 ## Execute Pulumi Script
-Once you have finished configuring the Pulumi stack, use command `pulumi up --stack dev` to execute the Pulumi script. This script may take 20-30 minutes to complete.
+Once you have finished configuring the Pulumi stack, use command `pulumi up --stack dev` to execute the Pulumi script. This script may take 20-30 minutes to complete, depending on the resources and GCP provisioning time.
 
 **Note**: It may take up to 10 minutes for GCP to provision the load balancer for the ingress after the Pulumi script completes execution. Kasm will not be accessible until the ingress load balancer is fully created.
 
@@ -114,7 +114,8 @@ Once you have finished configuring the Pulumi stack, use command `pulumi up --st
 If you set `kasm-gcp:data.cloud_dns_zone.create=true`, you need to point you domain to the created GCP DNS zone. If you set `kasm-gcp:data.cloud_dns_zone.create=false` and your domain already pointed to the defined `kasm-gcp:data.cloud_dns_zone`, you can ignore this step.
 
 ## Login Kasm
-Once you the Pulumi script is finished, you should be able to access your Kasm admin at https://{domain}
+Once you run the Pulumi script, you should be able to access the Kasm admin console at https://{domain}.
+
 To get the login credentials, execute the command `pulumi stack output --show-secrets`, and use the values of `Kasm Admin User` and `Kasm Admin Password`
 
 ## Install a Kasm Workspace
@@ -125,8 +126,8 @@ In the Kasm admin console, select **Workspaces > Registry** and choose the works
 ## Start A Kasm Session
 Navigate to the **WORKSPACES** tab at the top of the page and start your first Kasm session once the workspace image is ready!
 
-## Accessing Your GKE Cluster with kubectl
-Once the Pulumi script is completed, follow these steps to access your GKE cluster using kubectl.
+## (Optional) Accessing Your GKE Cluster with kubectl
+After the Pulumi script completes, follow these steps to access your GKE cluster using kubectl.
 
 ### Configure kubectl to Use the Cluster Credentials
 Run the following command to retrieve the credentials for your GKE cluster:
@@ -146,7 +147,7 @@ kubectl -n kasm get pods
 ### GCP Networking
 The table below provides an overview of the GCP network-related resources that are created:
 
-| **Resource Type**    | **Summary**                                                                                                                                                         |
+| **Resource Type**    | **Description**                                                                                                                                                     |
 |----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **VPC**              | Virtual Private Cloud (VPC) that hosts all compute instances and networking resources.                                                                              |
 | **Subnet**           | Subnets for the primary zone and one for each additional zone.                                                                                                      |
@@ -161,7 +162,7 @@ The table below provides an overview of the GCP network-related resources that a
 ### Other GCP Resources
 The table below provides an overview of the GCP resources that are created, which are not part of the previous table:
 
-| **Resource Type**    | **Summary**                                                                 |
+| **Resource Type**    | **Description**                                                             |
 |----------------------|-----------------------------------------------------------------------------|
 | **DatabaseInstance** | GCP PostgreSQL instance.                                                    |
 | **SQL User**         | A user created within the PostgreSQL instance for database access.          |
@@ -174,7 +175,7 @@ The table below provides an overview of the GCP resources that are created, whic
 ### No GCP Resources
 The table below provides an overview of the non-GCP resources that are created:
 
-| **Resource Type**     | **Summary**                                                                           |
+| **Resource Type**     | **Description**                                                                       |
 |-----------------------|---------------------------------------------------------------------------------------|
 | **Provider**          | Kubernetes provider used by Pulumi to communicate with the created GKE cluster.       |
 | **Release**           | Kasm Helm chart deployed into the created GKE cluster for hosting Kasm services.      |
