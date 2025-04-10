@@ -8,8 +8,9 @@ Before using the Pulumi script, ensure that the following requirements are met:
 - **Pulumi**: Install [Pulumi](https://www.pulumi.com/docs/get-started/) to manage your infrastructure as code.
 - **Python**: Make sure [Python](https://www.python.org/downloads/) 3.6 or higher is installed on your machine, along with [pip](https://packaging.python.org/en/latest/guides/installing-using-linux-tools/) and [virtualenv](https://virtualenv.pypa.io/en/latest/installation.html).  If you're having trouble setting up Python on your machine, see [Python 3 Installation & Setup Guide](https://realpython.com/installing-python/) for detailed installation instructions on various operating systems and distributions.
 - **GCP Account**: Ensure you have a Google Cloud Platform account with appropriate permissions to create resources, list of required permissions can be found [here](docs/GCP_PERMISSIONS.md).
-- **Google Cloud SDK**: Install the [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) to authenticate and configure your GCP environment.
-
+- **Google Cloud SDK**: Install the [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) to authenticate and configure your GCP environment. 
+- **Gcloud GKE component**: Make sure the [gcloud GKE component](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl#install_plugin) is installed, so Pulumi can interact with the created GKE cluster.
+  
 Additionally, you will need the following information ready before proceeding further:
 - **Kasm Hosting Domain**: The domain where Kasm will be hosted, e.g., `kasm.kasm-test.com`.
 - **GCP Project**: The GCP project where you want to deploy the Pulumi resources.
@@ -53,7 +54,6 @@ gcloud config set project {GCP_PROJECT_ID}
 Replace {GCP_PROJECT_ID} with your actual GCP project ID.
 
 For instructions on how to create a service account key, refer to the [GCP Service Account Documentation](https://cloud.google.com/iam/docs/keys-create-delete).
-
 
 ## Clone Git repo
 TODO: to be changed
@@ -166,11 +166,7 @@ Navigate to the **WORKSPACES** tab at the top of the page and start your first K
 After the Pulumi script completes, follow these steps to access your GKE cluster using kubectl.
 
 ### Configure kubectl to Use the Cluster Credentials
-If you **don't** have `kubectl` installed, you can install it using the following command:
-
-```bash
-gcloud components install kubectl
-```
+If you haven't installed `kubectl` yet, you can follow the instructions in this GCP [documentation](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl#install_kubectl) to install it.
 
 Run the following command to retrieve the credentials for your GKE cluster:
 ```bash
