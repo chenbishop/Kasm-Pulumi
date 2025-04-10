@@ -28,12 +28,33 @@ Additionally, you will need the following information ready before proceeding fu
     - **If No**: If you prefer not to have the Pulumi script create Cloud DNS, you must provide the name of your existing GCP Cloud DNS zone.
 
 ## Authenticate with GCP
+You can authenticate with GCP using either a user account or a service account.
+
+**Note:** Make sure your GCP user or service account has all the required [GCP Permissions](docs/GCP_PERMISSIONS.md).
+
+
+### Authenticate with a GCP User Account
+To authenticate using a standard GCP user, run the following commands:
+
 ```bash
 gcloud auth login
 gcloud auth application-default login
 ```
 
-**Note:** Make sure both authentication commands are successfully executed.
+### Authenticate with a Service Account
+If you're using a service account, run the following command:
+
+```bash
+gcloud auth activate-service-account --key-file=/PATH/TO/gcloud-service.key --project={GCP_PROJECT_ID}
+```
+Replace {GCP_PROJECT_ID} with your actual GCP project ID.
+For instructions on how to create a service account key, refer to the [GCP Service Account Documentation](https://cloud.google.com/iam/docs/keys-create-delete).
+
+
+
+
+
+
 
 ## Clone Git repo
 TODO: to be changed
@@ -130,6 +151,12 @@ Navigate to the **WORKSPACES** tab at the top of the page and start your first K
 After the Pulumi script completes, follow these steps to access your GKE cluster using kubectl.
 
 ### Configure kubectl to Use the Cluster Credentials
+If you **don't** have `kubectl` installed, you can install it using the following command:
+
+```bash
+gcloud components install kubectl
+```
+
 Run the following command to retrieve the credentials for your GKE cluster:
 ```bash
 gcloud container clusters get-credentials kasm-cluster --region={GCP Region}
