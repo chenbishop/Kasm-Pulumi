@@ -6,10 +6,9 @@ This example automates the deployment of a **multi-zone Kasm** across Google Clo
 Before using the Pulumi script, ensure that the following requirements are met:
 
 - **Pulumi**: Install [Pulumi](https://www.pulumi.com/docs/get-started/) to manage your infrastructure as code.
-- **Python**: Ensure Python 3.6+ is installed on your machine.
+- **Python**: Make sure [Python](https://www.python.org/downloads/) 3.6 or higher is installed on your machine, along with [pip](https://packaging.python.org/en/latest/guides/installing-using-linux-tools/) and virtualenv[https://virtualenv.pypa.io/en/latest/installation.html].  If you're having trouble setting up Python on your machine, see [Python 3 Installation & Setup Guide](https://realpython.com/installing-python/) for detailed installation instructions on various operating systems and distributions.
 - **GCP Account**: Ensure you have a Google Cloud Platform account with appropriate permissions to create resources, list of required permissions can be found [here](docs/GCP_PERMISSIONS.md).
 - **Google Cloud SDK**: Install the [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) to authenticate and configure your GCP environment.
-- **Pulumi GCP Provider**: You will need to install the Pulumi GCP and Pulumi Kubernetes providers.
 
 Additionally, you will need the following information ready before proceeding further:
 - **Kasm Hosting Domain**: The domain where Kasm will be hosted, e.g., `kasm.kasm-test.com`.
@@ -48,28 +47,25 @@ If you're using a service account, run the following command:
 gcloud auth activate-service-account --key-file=/PATH/TO/gcloud-service.key --project={GCP_PROJECT_ID}
 ```
 Replace {GCP_PROJECT_ID} with your actual GCP project ID.
+
 For instructions on how to create a service account key, refer to the [GCP Service Account Documentation](https://cloud.google.com/iam/docs/keys-create-delete).
-
-
-
-
-
 
 
 ## Clone Git repo
 TODO: to be changed
 ```bash
 git clone https://github.com/chenbishop/Kasm-Pulumi
-cd Kasm-Pulumi
+cd Kasm-Pulumi/gcp
 ```
 
 ## Setup Python Environment
 ```bash
-cd gcp
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
+
+> Make sure [Python](https://www.python.org/downloads/) 3.6 or higher is installed on your machine, along with [pip](https://packaging.python.org/en/latest/guides/installing-using-linux-tools/) and virtualenv[https://virtualenv.pypa.io/en/latest/installation.html].  If you're having trouble setting up Python on your machine, see [Python 3 Installation & Setup Guide](https://realpython.com/installing-python/) for detailed installation instructions on various operating systems and distributions.
 
 ## Setup Pulumi Stack
 ```bash
