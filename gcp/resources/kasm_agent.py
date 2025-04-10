@@ -41,10 +41,10 @@ class SetupKasmAgent:
             self.agent_vm.append(agent)
 
 
-        additional_zones = data.get("additional_kasm_zone")
+        additional_zones = data.get("additional_kasm_zone") or []
         self.additional_zone_agents = {}
         self.additional_zone_proxies = []
-        for zone_index in range(2, len(data.get("additional_kasm_zone"))+2):
+        for zone_index in range(2, len(data.get("additional_kasm_zone") or [])+2):
             # Create Agent VMs For Additional Zones
             zone_config = additional_zones[zone_index-2]
             self.additional_zone_agents[zone_config["name"]] = []

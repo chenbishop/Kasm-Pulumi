@@ -125,7 +125,8 @@ The multi-zone setup must have a valid SSL certificate, and the provided certifi
 - **zone_dns_name**: The GCP DNS name for the Cloud DNS zone (e.g., `kasm-test.com.`). the config is only used when `create=true`
 
 ### kasm-gcp:data.additional_kasm_zone
-A list of additional Kasm zones to be deployed. Each zone will have its own set of configurations:
+A list of additional Kasm zones to deploy. If you don’t wish to deploy any additional Kasm zones, simply remove this section from the Pulumi configuration file. Each zone will have its own set of configurations:
+
 - **name**: A unique identifier for each additional Kasm zone (e.g., `zoneb`, `zonec`).
 - **region**: The GCP region where the additional Kasm zone will be deployed (e.g., `europe-west1`). Each additional zone should reside in its own unique region.
 - **zone**: The GCP availability zone within the specified region for the additional Kasm zone (e.g., `europe-west1-b`).

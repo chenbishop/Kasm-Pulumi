@@ -152,13 +152,13 @@ class SetupGcpNetwork:
                                                  )
 
         # Additional Zone Resources
-        additional_zones = data.get("additional_kasm_zone")
+        additional_zones = data.get("additional_kasm_zone") or []
         self.additional_zone_public_ip_address = []
         self.additional_zone_proxy_vm_public_ip_address=[]
         self.additional_zone_subnet=[]
         self.additional_zone_router=[]
         self.additional_zone_nat=[]
-        for zone_index in range(2, len(data.get("additional_kasm_zone"))+2):
+        for zone_index in range(2, len(data.get("additional_kasm_zone") or [])+2):
             zone_config = additional_zones[zone_index-2]
             # Additional Zone Subnet
             subnet = Subnetwork(f"kasm-{zone_config["name"]}-subnet",

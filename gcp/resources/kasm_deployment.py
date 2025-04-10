@@ -9,7 +9,7 @@ config = Config()
 data = config.require_object("data")
 gcp_config = Config("gcp")
 secrets = config.require_secret_object("data")
-additional_zone = data.get("additional_kasm_zone")
+additional_zone = data.get("additional_kasm_zone") or []
 cert = secrets.apply(lambda secret_obj: secret_obj.get("cert"))
 cert_key = secrets.apply(lambda secret_obj: secret_obj.get("cert_key"))
 
