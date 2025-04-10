@@ -38,7 +38,9 @@ To authenticate using a standard GCP user, run the following commands:
 ```bash
 gcloud auth login
 gcloud auth application-default login
+gcloud config set project {GCP_PROJECT_ID}
 ```
+Replace {GCP_PROJECT_ID} with your actual GCP project ID.
 
 ### Authenticate with a Service Account
 If you're using a service account, run the following command:
@@ -46,6 +48,7 @@ If you're using a service account, run the following command:
 ```bash
 gcloud auth activate-service-account --key-file=/PATH/TO/gcloud-service.key --project={GCP_PROJECT_ID}
 pulumi config set gcp:credentials /PATH/TO/gcloud-service.key
+gcloud config set project {GCP_PROJECT_ID}
 ```
 Replace {GCP_PROJECT_ID} with your actual GCP project ID.
 
@@ -96,7 +99,7 @@ Configure the `Pulumi.dev.yaml` file by modifying it as follows:
 ### kasm-gcp:data
 - **region**: The GCP region for the primary Kasm zone. Example: `europe-west2`.
 - **zone**: The GCP zone for the primary Kasm zone. Example: `europe-west2-a`.
-- **auto_enable_gcp_api**: Set to `true` to allow Pulumi to automatically enable all necessary GCP APIs in the specified GCP project, This requires `Service Usage API` to be enabled and one of the following permissions in the GCP project: `roles/owner`, `roles/editor` or `roles/serviceusage.serviceUsageAdmin`. A list of the required APIs and instructions on how to enable them can be found [here](docs/GCP_APIS.md)
+- **auto_enable_gcp_api**: Set to `true` to allow Pulumi to automatically enable all necessary GCP APIs in the specified GCP project, this requires one of the following permissions in the GCP project: `roles/owner`, `roles/editor` or `roles/serviceusage.serviceUsageAdmin`. A list of the required APIs and instructions on how to enable them can be found [here](docs/GCP_APIS.md)
 - **agent_enable_ssh**: Set to `true` to enable SSH access for Kasm agent and proxy VMs, otherwise set to `false`.
 - **domain**: The domain to be used for the primary Kasm zone (e.g. `kasm.kasm-test.com`). The domain needs to be owned by you.
 - **agent_size**: The instance size for Kasm agents in the primary zone. Example: `e2-standard-4`.
