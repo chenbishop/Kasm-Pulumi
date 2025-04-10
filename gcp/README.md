@@ -6,7 +6,7 @@ This example automates the deployment of a **multi-zone Kasm** across Google Clo
 Before using the Pulumi script, ensure that the following requirements are met:
 
 - **Pulumi**: Install [Pulumi](https://www.pulumi.com/docs/get-started/) to manage your infrastructure as code.
-- **Python**: Make sure [Python](https://www.python.org/downloads/) 3.6 or higher is installed on your machine, along with [pip](https://packaging.python.org/en/latest/guides/installing-using-linux-tools/) and virtualenv[https://virtualenv.pypa.io/en/latest/installation.html].  If you're having trouble setting up Python on your machine, see [Python 3 Installation & Setup Guide](https://realpython.com/installing-python/) for detailed installation instructions on various operating systems and distributions.
+- **Python**: Make sure [Python](https://www.python.org/downloads/) 3.6 or higher is installed on your machine, along with [pip](https://packaging.python.org/en/latest/guides/installing-using-linux-tools/) and [virtualenv](https://virtualenv.pypa.io/en/latest/installation.html).  If you're having trouble setting up Python on your machine, see [Python 3 Installation & Setup Guide](https://realpython.com/installing-python/) for detailed installation instructions on various operating systems and distributions.
 - **GCP Account**: Ensure you have a Google Cloud Platform account with appropriate permissions to create resources, list of required permissions can be found [here](docs/GCP_PERMISSIONS.md).
 - **Google Cloud SDK**: Install the [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) to authenticate and configure your GCP environment.
 
@@ -45,6 +45,7 @@ If you're using a service account, run the following command:
 
 ```bash
 gcloud auth activate-service-account --key-file=/PATH/TO/gcloud-service.key --project={GCP_PROJECT_ID}
+pulumi config set gcp:credentials /PATH/TO/gcloud-service.key
 ```
 Replace {GCP_PROJECT_ID} with your actual GCP project ID.
 
@@ -67,12 +68,27 @@ pip install -r requirements.txt
 
 > Make sure [Python](https://www.python.org/downloads/) 3.6 or higher is installed on your machine, along with [pip](https://packaging.python.org/en/latest/guides/installing-using-linux-tools/) and virtualenv[https://virtualenv.pypa.io/en/latest/installation.html].  If you're having trouble setting up Python on your machine, see [Python 3 Installation & Setup Guide](https://realpython.com/installing-python/) for detailed installation instructions on various operating systems and distributions.
 
+## Login Pulumi
+If you already have a Pulumi account, simply run the following command:
+```bash
+pulumi login
+```
+
+If you'd prefer to use Pulumi locally (without login), run:
+
+```bash
+pulumi login --local
+```
+
 ## Setup Pulumi Stack
 ```bash
 pulumi stack init dev
-cp Pulumi.dev.yaml.example Pulumi.dev.yaml
+cat Pulumi.dev.yaml.example >> Pulumi.dev.yaml
+export PULUMI_CONFIG_PASSPHRASE="{PASSPHRASE}"
 pulumi config set gcp:project <your-project-id>
 ```
+Replace `{PASSPHRASE}` with your actual Pulumi passphrase.
+**Note**: If you'd like to permanently save the `PULUMI_CONFIG_PASSPHRASE` environment variable, run the following command:
 
 ## Config Pulumi Stack
 Configure the `Pulumi.dev.yaml` file by modifying it as follows:
@@ -80,7 +96,7 @@ Configure the `Pulumi.dev.yaml` file by modifying it as follows:
 ### kasm-gcp:data
 - **region**: The GCP region for the primary Kasm zone. Example: `europe-west2`.
 - **zone**: The GCP zone for the primary Kasm zone. Example: `europe-west2-a`.
-- **auto_enable_gcp_api**: Set to `true` to allow Pulumi to automatically enable all necessary GCP APIs in the specified GCP project, this requires one of the following permissions in the GCP project: `roles/owner`, `roles/editor` or `roles/serviceusage.serviceUsageAdmin`. Set to `false` if you prefer to manually enable the APIs. A list of the required APIs and instructions on how to enable them can be found [here](docs/GCP_APIS.md)
+- **auto_enable_gcp_api**: Set to `true` to allow Pulumi to automatically enable all necessary GCP APIs in the specified GCP project, This requires `Service Usage API` to be enabled and one of the following permissions in the GCP project: `roles/owner`, `roles/editor` or `roles/serviceusage.serviceUsageAdmin`. A list of the required APIs and instructions on how to enable them can be found [here](docs/GCP_APIS.md)
 - **agent_enable_ssh**: Set to `true` to enable SSH access for Kasm agent and proxy VMs, otherwise set to `false`.
 - **domain**: The domain to be used for the primary Kasm zone (e.g. `kasm.kasm-test.com`). The domain needs to be owned by you.
 - **agent_size**: The instance size for Kasm agents in the primary zone. Example: `e2-standard-4`.

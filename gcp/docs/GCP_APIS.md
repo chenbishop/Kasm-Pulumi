@@ -1,4 +1,5 @@
 # Required GCP APIs
+
 The following GCP APIs must be enabled for the Pulumi script to function properly:
 
 - `compute.googleapis.com` (Compute Engine)
@@ -7,7 +8,7 @@ The following GCP APIs must be enabled for the Pulumi script to function properl
 - `servicenetworking.googleapis.com` (Service Networking)
 - `sqladmin.googleapis.com` (Cloud SQL Admin)
 
-If `auto_enable_gcp_api=true` is set in the Pulumi stack configuration, the Pulumi script will automatically enable all of the APIs listed above in the specified GCP project. This requires one of the following permissions in the GCP project: `roles/owner`, `roles/editor` or `roles/serviceusage.serviceUsageAdmin`.
+If `auto_enable_gcp_api=true` is set in the Pulumi stack configuration, the Pulumi script will automatically enable all of the APIs listed above in the specified GCP project. This requires `Service Usage API` (see the sections below on how to enable Service Usage API in GPC) to be enabled and one of the following permissions in the GCP project: `roles/owner`, `roles/editor` or `roles/serviceusage.serviceUsageAdmin`.
 If `auto_enable_gcp_api` is set to `false`, the required GCP APIs must be enabled manually. You can enable the APIs either through the GCP Console or using the gcloud CLI, depending on your preference.
 
 ## Enabling GCP APIs via the GCP Console
