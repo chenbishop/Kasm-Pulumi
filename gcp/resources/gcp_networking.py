@@ -10,13 +10,27 @@ data = config.require_object("data")
 
 
 class SetupGcpNetwork:
-    def __init__(self):
-        # Create an VPC
-        self.vpc = Network(
-            f"kasm",
-            name=f"kasm",
-            auto_create_subnetworks=False,
-        )
+    def __init__(self, gcp_api):
+        ## if auto_enable_gcp_api is configured to true
+        if gcp_api:
+            # Create an VPC with depends on GCP APIs enablement
+            self.vpc = Network(
+                f"kasm",
+                name=f"kasm",
+                auto_create_subnetworks=False,
+                opts=ResourceOptions(
+                    depends_on=[gcp_api.gcp_compute_api,
+                                gcp_api.gcp_container_api,
+                                gcp_api.gcp_dns_api,
+                                gcp_api.gcp_servicenetworking_api,
+                                gcp_api.gcp_sqladmin_api])
+            )
+        else:
+            self.vpc = Network(
+                f"kasm",
+                name=f"kasm",
+                auto_create_subnetworks=False,
+            )
 
         # Create a Subnet
         self.subnet = Subnetwork(f"kasm-primary-zone-subnet",

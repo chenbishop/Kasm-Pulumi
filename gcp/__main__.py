@@ -1,3 +1,4 @@
+from resources.gcp_api import EnableGCPAPIs
 from resources.gcp_networking import SetupGcpNetwork
 from resources.gcp_db import SetupGcpDb
 from resources.gcp_kubernetes import SetupGcpKubernetes
@@ -11,8 +12,15 @@ from pulumi import Config
 config = Config()
 data = config.require_object("data")
 
-# Setup GCP Network
-gcp_network = SetupGcpNetwork()
+# if auto_enable_gcp_api is configured to true
+if data.get("auto_enable_gcp_api"):
+    # Enable the needed GCP APIs
+    gcp_api = EnableGCPAPIs()
+    # Setup GCP Network
+    gcp_network = SetupGcpNetwork(gcp_api)
+
+else:
+    gcp_network = SetupGcpNetwork(None)
 
 # Create GCP postgres DB
 db_password = password_generator(13)

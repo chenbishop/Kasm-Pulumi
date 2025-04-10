@@ -7,7 +7,7 @@ Before using the Pulumi script, ensure that the following requirements are met:
 
 - **Pulumi**: Install [Pulumi](https://www.pulumi.com/docs/get-started/) to manage your infrastructure as code.
 - **Python**: Ensure Python 3.6+ is installed on your machine.
-- **GCP Account**: Ensure you have a Google Cloud Platform account with appropriate permissions to create resources.
+- **GCP Account**: Ensure you have a Google Cloud Platform account with appropriate permissions to create resources, list of required permissions can be found [here](docs/GCP_PERMISSIONS.md).
 - **Google Cloud SDK**: Install the [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) to authenticate and configure your GCP environment.
 - **Pulumi GCP Provider**: You will need to install the Pulumi GCP and Pulumi Kubernetes providers.
 
@@ -63,6 +63,7 @@ Configure the `Pulumi.dev.yaml` file by modifying it as follows:
 ### kasm-gcp:data
 - **region**: The GCP region for the primary Kasm zone. Example: `europe-west2`.
 - **zone**: The GCP zone for the primary Kasm zone. Example: `europe-west2-a`.
+- **auto_enable_gcp_api**: Set to `true` to allow Pulumi to automatically enable all necessary GCP APIs in the specified GCP project, this requires one of the following permissions in the GCP project: `roles/owner`, `roles/editor` or `roles/serviceusage.serviceUsageAdmin`. Set to `false` if you prefer to manually enable the APIs. A list of the required APIs and instructions on how to enable them can be found [here](docs/GCP_APIS.md)
 - **agent_enable_ssh**: Set to `true` to enable SSH access for Kasm agent and proxy VMs, otherwise set to `false`.
 - **domain**: The domain to be used for the primary Kasm zone (e.g. `kasm.kasm-test.com`). The domain needs to be owned by you.
 - **agent_size**: The instance size for Kasm agents in the primary zone. Example: `e2-standard-4`.
@@ -103,7 +104,6 @@ A list of additional Kasm zones to be deployed. Each zone will have its own set 
 2. The GCP Cloud PostgreSQL database has the flags `deletion_protection=False` and `deletion_protection_enabled=False`. You can change these to `True` in the `gcp_db.py` script based on your preference.
 3. The GKE cluster has the flag `deletion_protection=False`. You can update this value in the `gcp_kubernetes.py` script according to your preference. 
 4. The GKE cluster has the flag `enable_autopilot=True`, which enables the GKE Autopilot feature. We highly recommend using Autopilot, as it simplifies cluster maintenance and automatically manages node scaling. If you prefer not to use Autopilot, you can modify the `gcp_kubernetes.py` script to create a custom node pool instead.
-
 
 ## Execute Pulumi Script
 Once you have finished configuring the Pulumi stack, use command `pulumi up --stack dev` to execute the Pulumi script. This script may take 20-30 minutes to complete, depending on the resources and GCP provisioning time.
@@ -162,13 +162,15 @@ The table below provides an overview of the GCP network-related resources that a
 ### Other GCP Resources
 The table below provides an overview of the GCP resources that are created, which are not part of the previous table:
 
-| **Resource Type**    | **Description**                                                             |
-|----------------------|-----------------------------------------------------------------------------|
-| **DatabaseInstance** | GCP PostgreSQL instance.                                                    |
-| **SQL User**         | A user created within the PostgreSQL instance for database access.          |
-| **Database**         | PostgreSQL database within the created PostgreSQL instance.                 |
-| **Cluster**          | GKE Autopilot cluster, used to host the Kasm Helm chart.                    |
-| **Instance**         | GCP VM instances hosting Kasm agents and Kasm proxies for additional zones. |
+| **Resource Type**    | **Description**                                                                                    |
+|----------------------|----------------------------------------------------------------------------------------------------|
+| **Service**          | Enable the required GCP project-level APIs by the Pulumi script (if `auto_enable_gcp_api=true`).   |
+| **DatabaseInstance** | GCP PostgreSQL instance.                                                                           |
+| **SQL User**         | A user created within the PostgreSQL instance for database access.                                 |
+| **Database**         | PostgreSQL database within the created PostgreSQL instance.                                        |
+| **Cluster**          | GKE Autopilot cluster, used to host the Kasm Helm chart.                                           |
+| **Instance**         | GCP VM instances hosting Kasm agents and Kasm proxies for additional zones.                        |
+
 
 
 

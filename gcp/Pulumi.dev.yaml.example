@@ -2,6 +2,7 @@ config:
   kasm-gcp:data:
     region: europe-west2
     zone: europe-west2-a
+    auto_enable_gcp_api: true
     vm_enable_ssh: true
     domain: kasm.kasm-test.com
     agent_size: e2-standard-4
