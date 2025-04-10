@@ -12,3 +12,5 @@
   Grants full control over Compute Engine resources including VPC networks, subnets, firewall rules, routers, NAT gateways, static IP addresses, and VM instances.
 - **`roles/container.admin`**  
   Provides full access to create and manage GKE (Google Kubernetes Engine) clusters, as well as access the clusters once created.
+- **`roles/iam.serviceAccountUser`**  
+  Grants permissions to use service accounts. This role is required to ensure that GKE clusters and VMs can work with the appropriate service account.

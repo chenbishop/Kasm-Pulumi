@@ -95,6 +95,9 @@ class SetupGcpNetwork:
                                                     network_url=self.vpc.id,
                                                 )
                                             ],
+                                        ),
+                                        opts=ResourceOptions(
+                                            depends_on=[self.vpc]
                                         ))
 
         # private IP for DB
@@ -118,7 +121,9 @@ class SetupGcpNetwork:
                                                name="kasm-public-zone",
                                                dns_name=f"{data.get('cloud_dns_zone')['zone_dns_name']}",
                                                description="Kasm public DNS zone",
-                                               )
+                                               opts=ResourceOptions(
+                                                    depends_on=[self.vpc]
+                                               ))
         else:
             self.dns = ManagedZone.get("kasm-public-zone", data.get("cloud_dns_zone")["zone_name"])
 
@@ -128,7 +133,10 @@ class SetupGcpNetwork:
                           type="A",
                           ttl=300,
                           managed_zone=self.dns.name,
-                          rrdatas=[self.public_ip_address.address])
+                          rrdatas=[self.public_ip_address.address],
+                          opts=ResourceOptions(
+                               depends_on=[self.vpc]
+                        ))
 
 
         # Create the Private Connection to DB address
@@ -189,7 +197,10 @@ class SetupGcpNetwork:
                                        type="A",
                                        ttl=300,
                                        managed_zone=self.dns.name,
-                                       rrdatas=[public_ip_address.address])
+                                       rrdatas=[public_ip_address.address],
+                                       opts=ResourceOptions(
+                                           depends_on=[self.vpc])
+                                       )
 
             # Additional Zone Public IP for Kasm Proxy
             proxy_public_ip_address = Address(f'kasm-{zone_config["name"]}-proxy-public-ip',
@@ -202,5 +213,8 @@ class SetupGcpNetwork:
                                        type="A",
                                        ttl=300,
                                        managed_zone=self.dns.name,
-                                       rrdatas=[proxy_public_ip_address.address])
+                                       rrdatas=[proxy_public_ip_address.address],
+                                       opts=ResourceOptions(
+                                           depends_on=[self.vpc])
+                                       )
 
