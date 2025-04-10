@@ -10,6 +10,11 @@ gcp_config = Config("gcp")
 
 class EnableGCPAPIs:
     def __init__(self):
+        self.gcp_serviceusage_api = gcp.projects.Service("gcp_serviceusage_api",
+                                                    service="serviceusage.googleapis.com",
+                                                    project= gcp_config.get("project"),
+                                                    disable_on_destroy=False)
+
         self.gcp_compute_api = gcp.projects.Service("gcp_compute_api",
                                        service="compute.googleapis.com",
                                        project= gcp_config.get("project"),
