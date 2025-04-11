@@ -1,6 +1,8 @@
 # Kasm GCP Deployment (Python)
 This example automates the deployment of a **multi-zone Kasm** across Google Cloud Platform (GCP). The script sets up all necessary resources, including networking, PostgreSQL database, Kubernetes cluster, and Kasm agents and proxies for seamless deployment.
 
+![img.png](../assets/gcp.png)
+
 ## Prerequisites
 
 Before using the Pulumi script, ensure that the following requirements are met:
@@ -162,19 +164,6 @@ pulumi up --stack dev
 ## Point Cloud Domain to the created DNS Zone
 If you set `kasm-gcp:data.cloud_dns_zone.create=true`, you need to point you domain to the created GCP DNS zone. If you set `kasm-gcp:data.cloud_dns_zone.create=false` and your domain already pointed to the defined `kasm-gcp:data.cloud_dns_zone`, you can ignore this step.
 
-## Login Kasm
-Once you run the Pulumi script, you should be able to access the Kasm admin console at https://{domain}.
-
-To get the login credentials, execute the command `pulumi stack output --show-secrets --stack dev`, and use the values of `Kasm Admin User` and `Kasm Admin Password`
-
-## Install a Kasm Workspace
-In the Kasm admin console, select **Workspaces > Registry** and choose the workspace image you would like to install.
-
-*Note: The agent may take a few minutes to download the selected workspace image before a session can be started.*
-
-## Start A Kasm Session
-Navigate to the **WORKSPACES** tab at the top of the page and start your first Kasm session once the workspace image is ready!
-
 ## (Optional) Accessing Your GKE Cluster with kubectl
 After the Pulumi script completes, follow these steps to access your GKE cluster using kubectl.
 
@@ -192,6 +181,19 @@ After configuring kubectl, you can start querying your GKE cluster. For instance
 ```bash
 kubectl -n kasm get pods
 ```
+
+## Login Kasm
+Once you run the Pulumi script, you should be able to access the Kasm admin console at https://{domain}.
+
+To get the login credentials, execute the command `pulumi stack output --show-secrets --stack dev`, and use the values of `Kasm Admin User` and `Kasm Admin Password`
+
+## Install a Kasm Workspace
+In the Kasm admin console, select **Workspaces > Registry** and choose the workspace image you would like to install.
+
+*Note: The agent may take a few minutes to download the selected workspace image before a session can be started.*
+
+## Start A Kasm Session
+Navigate to the **WORKSPACES** tab at the top of the page and start your first Kasm session once the workspace image is ready!
 
 
 ## Created Pulumi Resources
