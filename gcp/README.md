@@ -9,7 +9,7 @@ Before using the Pulumi script, ensure that the following requirements are met:
 - **Python**: Make sure [Python](https://www.python.org/downloads/) 3.6 or higher is installed on your machine, along with [pip](https://packaging.python.org/en/latest/guides/installing-using-linux-tools/) and [virtualenv](https://virtualenv.pypa.io/en/latest/installation.html).  If you're having trouble setting up Python on your machine, see [Python 3 Installation & Setup Guide](https://realpython.com/installing-python/) for detailed installation instructions on various operating systems and distributions.
 - **GCP Account**: Ensure you have a Google Cloud Platform account with appropriate permissions to create resources, list of required permissions can be found [here](docs/GCP_PERMISSIONS.md).
 - **Google Cloud SDK**: Install the [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) to authenticate and configure your GCP environment. 
-- **Google Cloud CLI GKE component**: Make sure the [Google Cloud CLI GKE component](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl#install_plugin) is installed, so Pulumi can interact with the created GKE cluster.
+- **Google Cloud SDK GKE component**: Make sure the [Google Cloud SDK GKE component](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl#install_plugin) is installed, so Pulumi can interact with the created GKE cluster.
   
 Additionally, you will need the following information ready before proceeding further:
 - **Kasm Hosting Domain**: The domain where Kasm will be hosted, e.g., `kasm.kasm-test.com`.
@@ -55,9 +55,8 @@ Replace {GCP_PROJECT_ID} with your actual GCP project ID.
 For instructions on how to create a service account key, refer to the [GCP Service Account Documentation](https://cloud.google.com/iam/docs/keys-create-delete).
 
 ## Clone Git repo
-TODO: to be changed
 ```bash
-git clone https://github.com/chenbishop/Kasm-Pulumi
+git clone https://github.com/kasmtech/Kasm-Pulumi
 cd Kasm-Pulumi/gcp
 ```
 
@@ -87,10 +86,13 @@ pulumi login --local
 pulumi stack init dev
 cat Pulumi.dev.yaml.example >> Pulumi.dev.yaml
 export PULUMI_CONFIG_PASSPHRASE="{PASSPHRASE}"
-pulumi config set gcp:project <your--gcp-project-id>
+pulumi config set gcp:project {GCP_PROJECT_ID}
 ```
-Replace `{PASSPHRASE}` with your actual Pulumi passphrase.
+Replace `{PASSPHRASE}` with your actual Pulumi passphrase and `{GCP Project ID}` with your actual GCP project ID.
 **Note**: If you'd like to permanently save the `PULUMI_CONFIG_PASSPHRASE` environment variable, run the following command:
+```bash
+echo 'export PULUMI_CONFIG_PASSPHRASE="{PASSPHRASE}"' >> ~/.bashrc
+```
 
 If you are using a GCP service account, make sure to execute the following command to configure your credentials:
 ```bash
@@ -157,7 +159,7 @@ If you set `kasm-gcp:data.cloud_dns_zone.create=true`, you need to point you dom
 ## Login Kasm
 Once you run the Pulumi script, you should be able to access the Kasm admin console at https://{domain}.
 
-To get the login credentials, execute the command `pulumi stack output --show-secrets`, and use the values of `Kasm Admin User` and `Kasm Admin Password`
+To get the login credentials, execute the command `pulumi stack output --show-secrets --stack dev`, and use the values of `Kasm Admin User` and `Kasm Admin Password`
 
 ## Install a Kasm Workspace
 In the Kasm admin console, select **Workspaces > Registry** and choose the workspace image you would like to install.
