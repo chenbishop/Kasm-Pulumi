@@ -7,7 +7,9 @@ Before using the Pulumi script, ensure that the following requirements are met:
 
 - **Pulumi**: Install [Pulumi](https://www.pulumi.com/docs/get-started/) to manage your infrastructure as code.
 - **Python**: Make sure [Python](https://www.python.org/downloads/) 3.6 or higher is installed on your machine, along with [pip](https://packaging.python.org/en/latest/guides/installing-using-linux-tools/) and [virtualenv](https://virtualenv.pypa.io/en/latest/installation.html).  If you're having trouble setting up Python on your machine, see [Python 3 Installation & Setup Guide](https://realpython.com/installing-python/) for detailed installation instructions on various operating systems and distributions.
-- **GCP Account**: Ensure you have a Google Cloud Platform account with appropriate permissions to create resources, list of required permissions can be found [here](docs/GCP_PERMISSIONS.md).
+- **GCP Account**: You’ll need a Google Cloud Platform (GCP) account with appropriate permissions to create and manage resources.
+  - A list of required IAM permissions can be found [here](docs/GCP_PERMISSIONS.md).
+  - A list of required GCP APIs can be found [here](docs/GCP_APIS.md).
 - **Google Cloud SDK**: Install the [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) to authenticate and configure your GCP environment. 
 - **Google Cloud SDK GKE component**: Make sure the [Google Cloud SDK GKE component](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl#install_plugin) is installed, so Pulumi can interact with the created GKE cluster.
   
