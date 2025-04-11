@@ -9,7 +9,7 @@ Before using the Pulumi script, ensure that the following requirements are met:
 - **Python**: Make sure [Python](https://www.python.org/downloads/) 3.6 or higher is installed on your machine, along with [pip](https://packaging.python.org/en/latest/guides/installing-using-linux-tools/) and [virtualenv](https://virtualenv.pypa.io/en/latest/installation.html).  If you're having trouble setting up Python on your machine, see [Python 3 Installation & Setup Guide](https://realpython.com/installing-python/) for detailed installation instructions on various operating systems and distributions.
 - **GCP Account**: Ensure you have a Google Cloud Platform account with appropriate permissions to create resources, list of required permissions can be found [here](docs/GCP_PERMISSIONS.md).
 - **Google Cloud SDK**: Install the [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) to authenticate and configure your GCP environment. 
-- **Gcloud GKE component**: Make sure the [gcloud GKE component](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl#install_plugin) is installed, so Pulumi can interact with the created GKE cluster.
+- **Google Cloud CLI GKE component**: Make sure the [Google Cloud CLI GKE component](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl#install_plugin) is installed, so Pulumi can interact with the created GKE cluster.
   
 Additionally, you will need the following information ready before proceeding further:
 - **Kasm Hosting Domain**: The domain where Kasm will be hosted, e.g., `kasm.kasm-test.com`.
@@ -48,7 +48,6 @@ If you're using a service account, run the following command:
 
 ```bash
 gcloud auth activate-service-account --key-file=/PATH/TO/gcloud-service.key --project={GCP_PROJECT_ID}
-pulumi config set gcp:credentials /PATH/TO/gcloud-service.key
 gcloud config set project {GCP_PROJECT_ID}
 ```
 Replace {GCP_PROJECT_ID} with your actual GCP project ID.
@@ -69,7 +68,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-> Make sure [Python](https://www.python.org/downloads/) 3.6 or higher is installed on your machine, along with [pip](https://packaging.python.org/en/latest/guides/installing-using-linux-tools/) and virtualenv[https://virtualenv.pypa.io/en/latest/installation.html].  If you're having trouble setting up Python on your machine, see [Python 3 Installation & Setup Guide](https://realpython.com/installing-python/) for detailed installation instructions on various operating systems and distributions.
+> Make sure [Python](https://www.python.org/downloads/) 3.6 or higher is installed on your machine, along with [pip](https://packaging.python.org/en/latest/guides/installing-using-linux-tools/) and [virtualenv](https://virtualenv.pypa.io/en/latest/installation.html).  If you're having trouble setting up Python on your machine, see [Python 3 Installation & Setup Guide](https://realpython.com/installing-python/) for detailed installation instructions on various operating systems and distributions.
 
 ## Login Pulumi
 If you already have a Pulumi account, simply run the following command:
@@ -88,10 +87,15 @@ pulumi login --local
 pulumi stack init dev
 cat Pulumi.dev.yaml.example >> Pulumi.dev.yaml
 export PULUMI_CONFIG_PASSPHRASE="{PASSPHRASE}"
-pulumi config set gcp:project <your-project-id>
+pulumi config set gcp:project <your--gcp-project-id>
 ```
 Replace `{PASSPHRASE}` with your actual Pulumi passphrase.
 **Note**: If you'd like to permanently save the `PULUMI_CONFIG_PASSPHRASE` environment variable, run the following command:
+
+If you are using a GCP service account, make sure to execute the following command to configure your credentials:
+```bash
+pulumi config set gcp:credentials /PATH/TO/gcloud-service.key
+```
 
 ## Config Pulumi Stack
 Configure the `Pulumi.dev.yaml` file by modifying it as follows:
