@@ -86,7 +86,7 @@ pulumi login --local
 pulumi stack init dev
 cat Pulumi.dev.yaml.example >> Pulumi.dev.yaml
 export PULUMI_CONFIG_PASSPHRASE="{PASSPHRASE}"
-pulumi config set gcp:project {GCP_PROJECT_ID}
+pulumi config set gcp:project {GCP_PROJECT_ID} --stack dev
 ```
 Replace `{PASSPHRASE}` with your actual Pulumi passphrase and `{GCP Project ID}` with your actual GCP project ID.
 **Note**: If you'd like to permanently save the `PULUMI_CONFIG_PASSPHRASE` environment variable, run the following command:
@@ -96,7 +96,7 @@ echo 'export PULUMI_CONFIG_PASSPHRASE="{PASSPHRASE}"' >> ~/.bashrc
 
 If you are using a GCP service account, make sure to execute the following command to configure your credentials:
 ```bash
-pulumi config set gcp:credentials /PATH/TO/gcloud-service.key
+pulumi config set gcp:credentials /PATH/TO/gcloud-service.key --stack dev
 ```
 
 ## Config Pulumi Stack
@@ -112,8 +112,8 @@ Configure the `Pulumi.dev.yaml` file by modifying it as follows:
 - **agent_number**: The number of Kasm agent instances to deploy in the primary zone. Example: `2`.
 - **agent_disk_size**: The disk size (in GB) for each Kasm agent instance across **all** zones. Example: `100`.
 - **db_tier**: The tier for the GCP PostgreSQL database is specified as `db-custom-{core_count}-{RAM_in_MB}`. We recommend using at least 2 cores and 3840 MB of RAM for optimal performance. For example, `db-custom-2-3840` represents a database tier with 2 CPU cores and 3840 MB of RAM.
-- **cert**: Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.pem | pulumi config set --path data.cert --secret`
-- **cert_key**: Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.key | pulumi config set --path data.cert_key --secret`
+- **cert**: Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.pem | pulumi config set --path data.cert --secret -stack dev `
+- **cert_key**: Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.key | pulumi config set --path data.cert_key --secret -stack dev`
 
 **Note**: We highly recommend using the following DNS structure for a multi-zone Kasm setup:
 - Assume Kasm domain is `kasm.kasm-test.com`.
@@ -149,7 +149,11 @@ A list of additional Kasm zones to deploy. If you don’t wish to deploy any add
 4. The GKE cluster has the flag `enable_autopilot=True`, which enables the GKE Autopilot feature. We highly recommend using Autopilot, as it simplifies cluster maintenance and automatically manages node scaling. If you prefer not to use Autopilot, you can modify the `gcp_kubernetes.py` script to create a custom node pool instead.
 
 ## Execute Pulumi Script
-Once you have finished configuring the Pulumi stack, use command `pulumi up --stack dev` to execute the Pulumi script. This script may take 20-30 minutes to complete, depending on the resources and GCP provisioning time.
+Once you have finished configuring the Pulumi stack, use command below to execute the Pulumi script. This script may take 20-30 minutes to complete, depending on the resources and GCP provisioning time.
+
+```bash
+pulumi up --stack dev
+```
 
 **Note**: It may take up to 10 minutes for GCP to provision the load balancer for the ingress after the Pulumi script completes execution. Kasm will not be accessible until the ingress load balancer is fully created.
 
