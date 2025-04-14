@@ -111,7 +111,7 @@ Configure the `Pulumi.dev.yaml` file by modifying it as follows:
 - **zone**: The GCP zone for the primary Kasm zone. Example: `europe-west2-a`.
 - **auto_enable_gcp_api**: Set to `true` to allow Pulumi to automatically enable all necessary GCP APIs in the specified GCP project, this requires one of the following permissions in the GCP project: `roles/owner`, `roles/editor` or `roles/serviceusage.serviceUsageAdmin`. A list of the required APIs and instructions on how to enable them can be found [here](docs/GCP_APIS.md)
 - **agent_enable_ssh**: Set to `true` to enable SSH access for Kasm agent and proxy VMs, otherwise set to `false`.
-- **domain**: The domain to be used for the primary Kasm zone (e.g. `kasm.kasm-test.com`). The domain needs to be owned by you.
+- **domain**: The domain to be used for the primary Kasm zone (e.g., `kasm.kasm-test.com`). The domain needs to be owned by you.
 - **agent_size**: The instance size for Kasm agents in the primary zone. Example: `e2-standard-4`.
 - **agent_number**: The number of Kasm agent instances to deploy in the primary zone. Example: `2`.
 - **agent_disk_size**: The disk size (in GB) for each Kasm agent instance across **all** zones. Example: `100`.
