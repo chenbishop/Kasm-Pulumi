@@ -116,8 +116,8 @@ Configure the `Pulumi.dev.yaml` file by modifying it as follows:
 - **agent_number**: The number of Kasm agent instances to deploy in the primary zone. Example: `2`.
 - **agent_disk_size**: The disk size (in GB) for each Kasm agent instance across **all** zones. Example: `100`.
 - **db_tier**: The tier for the GCP PostgreSQL database is specified as `db-custom-{core_count}-{RAM_in_MB}`. We recommend using at least 2 cores and 3840 MB of RAM for optimal performance. For example, `db-custom-2-3840` represents a database tier with 2 CPU cores and 3840 MB of RAM.
-- **cert**: Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.pem | pulumi config set --path data.cert --secret -stack dev `
-- **cert_key**: Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.key | pulumi config set --path data.cert_key --secret -stack dev`
+- **cert**: Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.pem | pulumi config set --path data.cert --secret --stack dev `
+- **cert_key**: Leave it as it is for Helm to generate. To use your own cert, run the command to set the value: `cat /path/to/cert.key | pulumi config set --path data.cert_key --secret --stack dev`
 
 **Note**: We highly recommend using the following DNS structure for a multi-zone Kasm setup:
 - Assume Kasm domain is `kasm.kasm-test.com`.
