@@ -36,4 +36,4 @@ kasm_helm = KasmDeployment(gcp_network, gcp_cluster, gcp_db)
 kasm_agent = SetupKasmAgent(gcp_network, kasm_helm, get_agent_startup_script, get_proxy_startup_script)
 
 # Config Kasm
-kasm_config = KasmConfig(gcp_cluster, kasm_helm, kasm_agent, get_kasm_config_script)
+kasm_config = KasmConfig(gcp_cluster, kasm_helm, kasm_agent, get_kasm_config_script, gcp_network)

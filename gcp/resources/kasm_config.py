@@ -1,8 +1,8 @@
-from charset_normalizer.md import annotations
 from pulumi import Config
 from pulumi_kubernetes.batch.v1 import Job, JobSpecArgs
 from pulumi_kubernetes.core.v1 import PodTemplateSpecArgs, PodSpecArgs, ContainerArgs, EnvVarArgs, EnvVarSourceArgs, SecretKeySelectorArgs
 import pulumi
+import json
 
 
 
@@ -14,7 +14,7 @@ additional_zone = data.get("additional_kasm_zone") or []
 
 
 class KasmConfig:
-    def __init__(self, gcp_cluster, kasm_helm, kasm_agent, get_kasm_config_script):
+    def __init__(self, gcp_cluster, kasm_helm, kasm_agent, get_kasm_config_script, gcp_network):
 
         # upstream_auth_address and proxy_hostname environmental variables for different zones
         env_vars = [
@@ -39,6 +39,66 @@ class KasmConfig:
             name="URL", value=data.get("domain")
         ))
 
+        # conf and gcp info for additional zones
+        additional_zones = data.get("additional_kasm_zone") or []
+        zone_output_list = []
+        for zone_index in range(len(additional_zones)):
+            zone_config = additional_zones[zone_index]
+
+            subnet = gcp_network.additional_zone_subnet[zone_index].name
+            zone_info = pulumi.Output.all(
+                name=zone_config["name"],
+                region=zone_config["region"],
+                zone=zone_config["zone"],
+                agent_size=zone_config["agent_size"],
+                subnet=subnet
+            ).apply(lambda args: {
+                "name": args["name"],
+                "region": args["region"],
+                "zone": args["zone"],
+                "agent_size": args["agent_size"],
+                "max_instance": "10",
+                "subnet": args["subnet"]
+            })
+            zone_output_list.append(zone_info)
+        additional_zone_output = pulumi.Output.all(zone_output_list)
+
+        # final config and gcp info for all
+        gcp_project = gcp_config.get("project")
+        gcp_info = pulumi.Output.all(
+            region=data.get("region"),
+            zone=data.get("zone"),
+            agent_size=data.get("agent_size"),
+            agent_disk_size=data.get("agent_disk_size"),
+            network=gcp_network.vpc.name,
+            subnet=gcp_network.subnet.name,
+            project=gcp_project,
+            additional_zone=additional_zone_output
+        ).apply(lambda args: {
+            "region": args["region"],
+            "zone": args["zone"],
+            "agent_size": args["agent_size"],
+            "agent_disk_size": args["agent_disk_size"],
+            "network": f"projects/{args['project']}/global/networks/{args['network']}",
+            "subnet": f"projects/{args['project']}/regions/{args['region']}/subnetworks/{args['subnet']}",
+            "max_instance": "10",
+            "project": args["project"],
+            "image": "projects/ubuntu-os-cloud/images/ubuntu-2404-lts-amd64",
+            "additional_zone": args["additional_zone"]
+        })
+
+        gcp_info_json = gcp_info.apply(lambda info: json.dumps(info))
+        env_vars.append(EnvVarArgs(
+            name="GCP_INFO", value=gcp_info_json
+        ))
+
+
+
+        # cloud provider name
+        env_vars.append(EnvVarArgs(
+            name="CLOUD_PROVIDER", value="gcp"
+        ))
+
         # total number of agents environmental variables
         total_agent = data.get("agent_number")
         for zone in additional_zone:
@@ -54,6 +114,22 @@ class KasmConfig:
                     name="kasm-secrets",
                     key="admin-password",
         ))))
+
+        # SSL cert
+        env_vars.append(EnvVarArgs(
+            name="CERT", value_from=EnvVarSourceArgs(
+                secret_key_ref=SecretKeySelectorArgs(
+                    name="kasm-nginx-proxy-cert",
+                    key="tls.crt",
+                ))))
+        env_vars.append(EnvVarArgs(
+            name="CERT_KEY", value_from=EnvVarSourceArgs(
+                secret_key_ref=SecretKeySelectorArgs(
+                    name="kasm-nginx-proxy-cert",
+                    key="tls.key",
+                ))))
+
+
 
         # all agents' IP addresses environmental variable
         all_agent_list = []
@@ -85,8 +161,8 @@ class KasmConfig:
                 template=PodTemplateSpecArgs(
                     spec=PodSpecArgs(
                         containers=[ContainerArgs(
-                            name="bkasm-config-container",
-                            image="ubuntu:24.04",
+                            name="kasm-config-container",
+                            image="ubuntu:25.04",
                             command=["/bin/bash", "-c", get_kasm_config_script()],
                             env=env_vars
                         )],
