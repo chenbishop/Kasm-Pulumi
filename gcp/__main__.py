@@ -6,7 +6,7 @@ from resources.kasm_deployment import KasmDeployment
 from resources.kasm_agent import SetupKasmAgent
 from resources.kasm_config import KasmConfig
 from utils.password_generator import password_generator
-from utils.startup_script import get_agent_startup_script, get_proxy_startup_script, get_kasm_config_script
+from utils.startup_script import get_agent_startup_script, get_proxy_startup_script, get_kasm_config_script, get_kasm_config_configmap
 from pulumi import Config
 
 config = Config()
@@ -36,4 +36,4 @@ kasm_helm = KasmDeployment(gcp_network, gcp_cluster, gcp_db)
 kasm_agent = SetupKasmAgent(gcp_network, kasm_helm, get_agent_startup_script, get_proxy_startup_script)
 
 # Config Kasm
-kasm_config = KasmConfig(gcp_cluster, kasm_helm, kasm_agent, get_kasm_config_script, gcp_network)
+kasm_config = KasmConfig(gcp_cluster, kasm_helm, kasm_agent, get_kasm_config_script, get_kasm_config_configmap, gcp_network)

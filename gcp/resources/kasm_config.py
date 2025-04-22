@@ -1,7 +1,8 @@
 from pulumi import Config
 from pulumi_kubernetes.batch.v1 import Job, JobSpecArgs
-from pulumi_kubernetes.core.v1 import PodTemplateSpecArgs, PodSpecArgs, ContainerArgs, EnvVarArgs, EnvVarSourceArgs, SecretKeySelectorArgs
+from pulumi_kubernetes.core.v1 import PodTemplateSpecArgs, PodSpecArgs, ContainerArgs, EnvVarArgs, EnvVarSourceArgs, SecretKeySelectorArgs, ConfigMap
 import pulumi
+import pulumi_gcp
 import json
 
 
@@ -14,7 +15,7 @@ additional_zone = data.get("additional_kasm_zone") or []
 
 
 class KasmConfig:
-    def __init__(self, gcp_cluster, kasm_helm, kasm_agent, get_kasm_config_script, gcp_network):
+    def __init__(self, gcp_cluster, kasm_helm, kasm_agent, get_kasm_config_script, get_kasm_config_configmap, gcp_network):
 
         # upstream_auth_address and proxy_hostname environmental variables for different zones
         env_vars = [
@@ -42,6 +43,7 @@ class KasmConfig:
         # conf and gcp info for additional zones
         additional_zones = data.get("additional_kasm_zone") or []
         zone_output_list = []
+        gcp_project = gcp_config.get("project")
         for zone_index in range(len(additional_zones)):
             zone_config = additional_zones[zone_index]
 
@@ -51,6 +53,7 @@ class KasmConfig:
                 region=zone_config["region"],
                 zone=zone_config["zone"],
                 agent_size=zone_config["agent_size"],
+                project=gcp_project,
                 subnet=subnet
             ).apply(lambda args: {
                 "name": args["name"],
@@ -58,13 +61,16 @@ class KasmConfig:
                 "zone": args["zone"],
                 "agent_size": args["agent_size"],
                 "max_instance": "10",
-                "subnet": args["subnet"]
+                "subnet": f"projects/{args['project']}/regions/{args['region']}/subnetworks/{args['subnet']}"
             })
             zone_output_list.append(zone_info)
         additional_zone_output = pulumi.Output.all(zone_output_list)
 
+        # Get latest ubuntu noble image URL
+        image = pulumi_gcp.compute.get_image(family="ubuntu-2404-lts-amd64",
+                                             project="ubuntu-os-cloud")
+
         # final config and gcp info for all
-        gcp_project = gcp_config.get("project")
         gcp_info = pulumi.Output.all(
             region=data.get("region"),
             zone=data.get("zone"),
@@ -73,7 +79,8 @@ class KasmConfig:
             network=gcp_network.vpc.name,
             subnet=gcp_network.subnet.name,
             project=gcp_project,
-            additional_zone=additional_zone_output
+            additional_zone=additional_zone_output,
+            image=image.id
         ).apply(lambda args: {
             "region": args["region"],
             "zone": args["zone"],
@@ -83,7 +90,7 @@ class KasmConfig:
             "subnet": f"projects/{args['project']}/regions/{args['region']}/subnetworks/{args['subnet']}",
             "max_instance": "10",
             "project": args["project"],
-            "image": "projects/ubuntu-os-cloud/images/ubuntu-2404-lts-amd64",
+            "image": args["image"],
             "additional_zone": args["additional_zone"]
         })
 
@@ -146,6 +153,20 @@ class KasmConfig:
                 )
         ))
 
+        # bash script for config job
+        self.script = ConfigMap("kasm-config-script",
+                                metadata={
+                                    "name": "kasm-config-script",
+                                    "namespace": "kasm"
+                                },
+                                data={
+                                    "kasm_config.sh": get_kasm_config_configmap()
+                                },
+                                opts=pulumi.ResourceOptions(provider=gcp_cluster.cluster_provider,
+                                                            depends_on=[kasm_helm.helm])
+
+        )
+
         # Kuberentes job to configure Kasm, this includes enable agents, configuring zones and group settings
         self.job = Job(
             "kasm-config",
@@ -164,12 +185,22 @@ class KasmConfig:
                             name="kasm-config-container",
                             image="ubuntu:25.04",
                             command=["/bin/bash", "-c", get_kasm_config_script()],
-                            env=env_vars
+                            env=env_vars,
+                            volume_mounts=[{
+                                "name": "kasm-config-script",
+                                "mountPath": "/tmp/kasm_config.sh",
+                                "sub_path":"kasm_config.sh"
+                            }]
                         )],
-                        restart_policy="Never"
+                        restart_policy="Never",
+                        volumes=[{
+                            "name": "kasm-config-script",
+                            "configMap": {"name": "kasm-config-script"},
+                        }]
                     )
                 ),
             ),
             opts=pulumi.ResourceOptions(provider=gcp_cluster.cluster_provider,
-                                        depends_on=[kasm_helm.helm])
+                                        depends_on=[kasm_helm.helm, self.script],
+                                        ignore_changes=["spec"])
         )
