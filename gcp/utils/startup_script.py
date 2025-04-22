@@ -243,7 +243,6 @@ ZONE_INFO=\$(echo "\$response" | jq '{
     avg_cores: (([.servers[].cores] | add) / (.servers | length) | ceil),
   }]
 }');
-echo \$ZONE_INFO
 
 CERT_ESCAPED=\${CERT//\$'\\\\n'/\\\\\\\\n}
 CERT_KEY_ESCAPED=\${CERT_KEY//\$'\\\\n'/\\\\\\\\n}
@@ -263,20 +262,10 @@ echo "\$ZONE_INFO" | jq -c '.zones[]' | while read -r zone; do
   avg_cores=\$(echo "\$zone" | jq -r '.avg_cores')
   avg_memory_mb=\$(echo "\$zone" | jq -r '.avg_memory_mb')
   
-  response=\$(curl "https://\$URL/api/admin/create_autoscale_config" \
-  -k \
-  -s \
-  -H 'accept: application/json' \
-  -H 'content-type: application/json' \
-  -b 'username="admin@kasm.local"; session_token="'"\$KASM_TOKEN"'"' \
-  --data-raw '{"target_autoscale_config":{"enabled":false,"server_pool_id":"'"\$SERVER_POOL_ID"'","autoscale_type":"Docker Agent","autoscale_config_name":"'"\$zone_name"'-autoscale_config","zone_id":"'"\$zone_id"'","standby_cores":"'"\$avg_cores"'","standby_gpus":"0","standby_memory_mb":"'"\$avg_memory_mb"'","agent_cores_override":"'"\$avg_cores"'","agent_gpus_override":"0","agent_memory_override_gb":"'"\$avg_memory_gb"'","nginx_cert":"'"\$CERT_ESCAPED"'","nginx_key":"'"\$CERT_KEY_ESCAPED"'","downscale_backoff":"900"},"token":"'"\$KASM_TOKEN"'","username":"admin@kasm.local"}'); \
-      > /dev/null 2>&1;
-  autoscale_config_id=\$(echo "\$response" | jq -r '.autoscale_config.autoscale_config_id');
-  echo "Autoscale config with id \$autoscale_config_id created for zone: \$zone_name with ID: \$zone_id"
-  
   if [ "\$zone_name" != "default" ]; then
     zone_info=\$(echo "\$GCP_INFO" | jq -r --arg name "\$zone_name" '.["additional_zone"][0][] | select(.name == \$name)')
     subnet=\$(echo "\$zone_info" | jq -r '.subnet')
+    max_instance=\$(echo "\$zone_info" | jq -r '.["max_instance"]')
     agent_size=\$(echo "\$zone_info" | jq -r '.agent_size')
     region=\$(echo "\$zone_info" | jq -r '.region')
     zone=\$(echo "\$zone_info" | jq -r '.zone')
@@ -298,6 +287,21 @@ echo "\$ZONE_INFO" | jq -c '.zones[]' | while read -r zone; do
   -b 'username="admin@kasm.local"; session_token="'"\$KASM_TOKEN"'"' \
   --data-raw '{"target_vm_provider_config":{"vm_provider_config_name":"'"\$zone_name"'_gcp_provider_config","vm_provider_name":"gcp","max_instances":"'"\$max_instance"'","vm_installed_os_type":"linux","startup_script_type":"startup-script","startup_script":"#\\u0021/usr/bin/env bash\\nset -ex\\nexport DEBIAN_FRONTEND=noninteractive\\n\\napt_wait () {{\\n  while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 ; do\\n    sleep 1\\n  done\\n  while sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 ; do\\n    sleep 1\\n  done\\n  if [ -f /var/log/unattended-upgrades/unattended-upgrades.log ]; then\\n    while sudo fuser /var/log/unattended-upgrades/unattended-upgrades.log >/dev/null 2>&1 ; do\\n      sleep 1\\n    done\\n  fi\\n}}\\n\\ninstall_xfce (){{\\n  apt-get install -y supervisor xfce4 xfce4-terminal xterm xclip\\n}}\\n\\ninstall_kasmvnc (){{\\n  cd /tmp\\n  KASM_VNC_PATH=/usr/share/kasmvnc\\n  BUILD_URL=\\"https://github.com/kasmtech/KasmVNC/releases/download/v1.3.3/kasmvncserver_focal_1.3.3_amd64.deb\\"\\n  KASM_VNC_PASSWD={connection_password}\\n  KASM_VNC_USER={connection_username}\\n  wget \\"\$BUILD_URL\\" -O kasmvncserver.deb\\n  apt-get install -y gettext ssl-cert libxfont2\\n  apt-get install -y /tmp/kasmvncserver.deb\\n  rm -f /tmp/kasmvncserver.deb\\n  ln -s \$KASM_VNC_PATH/www/index.html \$KASM_VNC_PATH/www/vnc.html\\n  cd /tmp\\n  mkdir -p \$KASM_VNC_PATH/www/Downloads\\n  chown -R 0:0 \$KASM_VNC_PATH\\n  chmod -R og-w \$KASM_VNC_PATH\\n  chown -R 1000:0 \$KASM_VNC_PATH/www/Downloads\\n  echo -e \\"\$KASM_VNC_PASSWD\\\\\\\\n\$KASM_VNC_PASSWD\\\\\\\\n\\" | kasmvncpasswd -u \$KASM_VNC_USER -w \\"/home/\$KASM_VNC_USER/.kasmpasswd\\"\\n  chown -R 1000:0 \\"/home/\$KASM_VNC_USER/.kasmpasswd\\"\\n  addgroup \$KASM_VNC_USER ssl-cert\\n  su -l -c \\"vncserver -select-de XFCE\\" \$KASM_VNC_USER\\n}}\\n\\ninstall_tigervnc (){{\\n  apt-get install -y tigervnc-standalone-server\\n  mkdir /home/ubuntu/.vnc\\n  echo \\"password123abc\\" | vncpasswd -f > /home/ubuntu/.vnc/passwd\\n  echo -e \\"#\\u0021/bin/sh\\\\\\\\nunset SESSION_MANAGER\\\\\\\\nunset DBUS_SESSION_BUS_ADDRESS\\\\\\\\nexec startxfce4\\" >> /home/ubuntu/.vnc/xstartup\\n  chown -R ubuntu:ubuntu /home/ubuntu/.vnc\\n  chmod 0600 /home/ubuntu/.vnc/passwd\\n  su -l -c \\"vncserver -localhost no\\" ubuntu\\n}}\\n\\napt_wait\\nsleep 10\\napt_wait\\napt-get update\\ninstall_xfce\\ninstall_kasmvnc\\n#install_tigervnc","gcp_project":"'"\$project"'","gcp_region":"'"\$region"'","gcp_zone":"'"\$zone"'","gcp_machine_type":"'"\$agent_size"'","gcp_image":"'"\$image"'","gcp_boot_volume_gb":"'"\$agent_disk_size"'","gcp_disk_type":"pd-ssd","gcp_network":"'"\$network"'","gcp_subnetwork":"'"\$subnet"'","gcp_network_tags":"","gcp_custom_labels":"","gcp_credentials":"","gcp_metadata":"","gcp_service_account":"","gcp_guest_accelerators":"","gcp_config_override":""},"token":"'"\$KASM_TOKEN"'","username":"admin@kasm.local"}'); \
       > /dev/null 2>&1;
+  vm_provider_config_id=\$(echo "\$response" | jq -r '.vm_provider_config.vm_provider_config_id');
+  vm_provider_config_name=\$(echo "\$response" | jq -r '.vm_provider_config.vm_provider_config_name');
+  echo "VM provider config \$vm_provider_config_name with id \$vm_provider_config_id created for zone: \$zone_name with ID: \$zone_id"
+  
+    response=\$(curl "https://\$URL/api/admin/create_autoscale_config" \
+  -k \
+  -s \
+  -H 'accept: application/json' \
+  -H 'content-type: application/json' \
+  -b 'username="admin@kasm.local"; session_token="'"\$KASM_TOKEN"'"' \
+  --data-raw '{"target_autoscale_config":{"enabled":false,"server_pool_id":"'"\$SERVER_POOL_ID"'","vm_provider_config_id": "'"\$vm_provider_config_id"'", "autoscale_type":"Docker Agent","autoscale_config_name":"'"\$zone_name"'-autoscale_config","zone_id":"'"\$zone_id"'","standby_cores":"'"\$avg_cores"'","standby_gpus":"0","standby_memory_mb":"'"\$avg_memory_mb"'","agent_cores_override":"'"\$avg_cores"'","agent_gpus_override":"0","agent_memory_override_gb":"'"\$avg_memory_gb"'","nginx_cert":"'"\$CERT_ESCAPED"'","nginx_key":"'"\$CERT_KEY_ESCAPED"'","downscale_backoff":"900"},"token":"'"\$KASM_TOKEN"'","username":"admin@kasm.local"}'); \
+      > /dev/null 2>&1;
+  autoscale_config_id=\$(echo "\$response" | jq -r '.autoscale_config.autoscale_config_id');
+  autoscale_config_name=\$(echo "\$response" | jq -r '.autoscale_config.autoscale_config_name');
+  echo "Autoscale config \$autoscale_config_name with id \$autoscale_config_id created for zone: \$zone_name with ID: \$zone_id"
   
 done
 
