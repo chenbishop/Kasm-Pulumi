@@ -5,7 +5,7 @@ services:
     user: "1003:1005"
     #    image: "kasmweb/kasm-guac${IMAGE_PRIVATE}:${IMAGE_TAG}"
     #    image: "kasmweb/kasm-guac-dev:dev"
-    image: "kasmweb/kasm-guac:1.16.0"
+    image: "kasmweb/kasm-guac:1.17.0"
     read_only: false
     networks:
       - kasm_default_network
@@ -27,7 +27,7 @@ services:
     container_name: rdp-gateway
     #    image: "kasmweb/rdp-gateway${RDP_IMAGE_PRIVATE}:${RDP_IMAGE_TAG}"
     #    image: "kasmweb/rdp-gateway-dev:dev"
-    image: "kasmweb/rdp-gateway:1.16.0"
+    image: "kasmweb/rdp-gateway:1.17.0"
     ports:
       - "3389:3389"
     read_only: false
@@ -50,7 +50,7 @@ services:
     container_name: rdp-https-gateway
     #    image: "kasmweb/rdp-https-gateway${RDPHTTPS_IMAGE_PRIVATE}:${RDPHTTPS_IMAGE_TAG}"
     #    image: "kasmweb/rdp-https-gateway:develop"
-    image: "kasmweb/rdp-https-gateway:1.16.0"
+    image: "kasmweb/rdp-https-gateway:1.17.0"
     ports:
       - "9443:9443"
     depends_on:
@@ -72,7 +72,7 @@ services:
     container_name: kasm_proxy
     #    image: "kasmweb/proxy${IMAGE_PRIVATE}:${IMAGE_TAG}"
     #    image: "kasmweb/proxy:develop"
-    image: "kasmweb/proxy:1.16.0"
+    image: "kasmweb/proxy:1.17.0"
     ports:
       - "443:443"
       - "8080:8080"
