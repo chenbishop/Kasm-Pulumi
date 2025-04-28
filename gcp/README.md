@@ -162,7 +162,7 @@ pulumi up --stack dev
 **Note**: It may take up to 10 minutes for GCP to provision the load balancer for the ingress after the Pulumi script completes execution. Kasm will not be accessible until the ingress load balancer is fully created.
 
 ## Point Cloud Domain to the created DNS Zone
-If you set `kasm-gcp:data.cloud_dns_zone.create=true`, you need to point you domain to the created GCP DNS zone. If you set `kasm-gcp:data.cloud_dns_zone.create=false` and your domain already pointed to the defined `kasm-gcp:data.cloud_dns_zone`, you can ignore this step.
+If you set `kasm-gcp:data.cloud_dns_zone.create=true`, you need to point you domain to the created GCP DNS zone (The DNS zone name should be `kasm-public-zone`). If you set `kasm-gcp:data.cloud_dns_zone.create=false` and your domain already pointed to the defined `kasm-gcp:data.cloud_dns_zone`, you can ignore this step.
 
 ## (Optional) Accessing Your GKE Cluster with kubectl
 After the Pulumi script completes, follow these steps to access your GKE cluster using kubectl.

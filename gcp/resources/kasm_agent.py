@@ -12,7 +12,7 @@ class SetupKasmAgent:
 
         # Get the Agent Startup script
         agent_startup_script = get_agent_startup_script(agent_swap_size=4,
-                                            kasm_build_url="https://kasm-static-content.s3.amazonaws.com/kasm_release_1.16.1.98d6fa.tar.gz",
+                                            kasm_build_url="https://kasm-static-content.s3.amazonaws.com/kasm_release_1.17.0.bbc15c.tar.gz",
                                             manager_url= data.get("domain"),
                                             manager_token=kasm_helm.manager_token)
 
@@ -49,7 +49,7 @@ class SetupKasmAgent:
             zone_config = additional_zones[zone_index-2]
             self.additional_zone_agents[zone_config["name"]] = []
             agent_startup_script = get_agent_startup_script(agent_swap_size=4,
-                                                kasm_build_url="https://kasm-static-content.s3.amazonaws.com/kasm_release_1.16.1.98d6fa.tar.gz",
+                                                kasm_build_url="https://kasm-static-content.s3.amazonaws.com/kasm_release_1.17.0.bbc15c.tar.gz",
                                                 manager_url= zone_config["domain"],
                                                 manager_token=kasm_helm.manager_token)
             for agent_index in range(1, int(zone_config["agent_number"])+1):
