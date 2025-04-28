@@ -100,11 +100,11 @@ ZONE_INFO=$(echo "$response" | jq '{
   zones: [.zones[] | {
     zone_name: .zone_name,
     zone_id: .zone_id,
-    total_memory_gb: (([.servers[].memory] | add) / 1073741824 | ceil),
+    total_memory_gb: ((([.servers[].memory] | add) / 1073741824) | floor),
     total_cores: ([.servers[].cores] | add),
-    avg_memory_gb: (([.servers[].memory] | add) / (.servers | length) / 1073741824 | ceil),
-    avg_memory_mb: (([.servers[].memory] | add) / (.servers | length) / 1048576 | ceil),
-    avg_cores: (([.servers[].cores] | add) / (.servers | length) | ceil),
+    avg_memory_gb: ((([.servers[].memory] | add) / (.servers | length) / 1073741824) | floor),
+    avg_memory_mb: ((([.servers[].memory] | add) / (.servers | length) / 1048576) | floor),
+    avg_cores: (([.servers[].cores] | add) / (.servers | length) | floor),
   }]
 }');
 
