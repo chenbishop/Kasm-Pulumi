@@ -66,7 +66,7 @@ services:
     volumes:
       - ./certs/server.key:/opt/rdpgw/key.pem
       - ./certs/server.crt:/opt/rdpgw/server.pem
-      - ./rdpgw_kasm.yaml:/opt/rdpgw/rdpgw_kasm.yaml
+      - ./rdpgw_kasm.yaml:/opt/rdpgw/conf/rdp_https_gateway.app.config.yaml
     restart: always
   kasm-proxy:
     container_name: kasm_proxy
