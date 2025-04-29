@@ -17,6 +17,10 @@ metadata:
   labels:
     app.kubernetes.io/name: {{ $roleName }}-svc
     {{- include "kasm.defaultLabels" $values | indent 4 }}
+{{- if and (eq $values.Values.global.pulumiDeployment.cloudProvider "gcp") (eq $serviceName  "kasm-proxy") }}
+  annotations:
+    cloud.google.com/backend-config: '{"default": "kasm-proxy-backend-config"}'
+{{- end }}
 spec:
   selector:
     app.kubernetes.io/name: {{ $roleName }}

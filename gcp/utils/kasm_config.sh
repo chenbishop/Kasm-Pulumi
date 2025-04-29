@@ -103,7 +103,7 @@ ZONE_INFO=$(echo "$response" | jq '{
     total_memory_gb: ((([.servers[].memory] | add) / 1073741824) | floor),
     total_cores: ([.servers[].cores] | add),
     avg_memory_gb: ((([.servers[].memory] | add) / (.servers | length) / 1073741824) | floor),
-    avg_memory_mb: ((([.servers[].memory] | add) / (.servers | length) / 1048576) | floor),
+    avg_memory_mb: (((([.servers[].memory] | add) / (.servers | length) / 1073741824) | floor) * 1024),
     avg_cores: (([.servers[].cores] | add) / (.servers | length) | floor),
   }]
 }');
