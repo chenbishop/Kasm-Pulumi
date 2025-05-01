@@ -53,7 +53,7 @@ class SetupKasmAgent:
                                                 manager_url= zone_config["domain"],
                                                 manager_token=kasm_helm.manager_token)
             for agent_index in range(1, int(zone_config["agent_number"])+1):
-                agent = Instance('kasm-{zone_config["name"]}-agent-{agent_index}',
+                agent = Instance(f'kasm-{zone_config["name"]}-agent-{agent_index}',
                                  name=f'kasm-{zone_config["name"]}-agent-{agent_index}',
                                  network_interfaces=[{
                                      "access_configs": [{}],
