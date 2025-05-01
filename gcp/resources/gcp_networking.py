@@ -36,7 +36,7 @@ class SetupGcpNetwork:
         self.subnet = Subnetwork(f"kasm-primary-zone-subnet",
                                  name=f"kasm-primary-zone-subnet",
                                  ip_cidr_range="10.0.1.0/24",
-                                 region=f"{data.get('region')}",
+                                 region=f'{data.get("region")}',
                                  network=self.vpc.id,
                                  )
 
@@ -161,25 +161,25 @@ class SetupGcpNetwork:
         for zone_index in range(2, len(data.get("additional_kasm_zone") or [])+2):
             zone_config = additional_zones[zone_index-2]
             # Additional Zone Subnet
-            subnet = Subnetwork(f"kasm-{zone_config["name"]}-subnet",
-                                     name=f"kasm-{zone_config["name"]}-subnet",
+            subnet = Subnetwork(f'kasm-{zone_config["name"]}-subnet',
+                                     name=f'kasm-{zone_config["name"]}-subnet',
                                      ip_cidr_range=f"10.0.{zone_index}.0/24",
-                                     region=f"{zone_config["region"]}",
+                                     region=f'{zone_config["region"]}',
                                      network=self.vpc.id,
                                      )
             self.additional_zone_subnet.append(subnet)
 
             # Additional Zone Cloud Router
-            router = Router(f"kasm-{zone_config["name"]}-router",
-                                 name=f"kasm-{zone_config["name"]}-router",
+            router = Router(f'kasm-{zone_config["name"]}-router',
+                                 name=f'kasm-{zone_config["name"]}-router',
                                  network=self.vpc.id,
                                  region=zone_config["region"]
                                  )
             self.additional_zone_router.append(router)
 
             # Additional Zone Cloud NAT
-            nat = RouterNat(f"kasm-{zone_config["name"]}-nat",
-                                 name=f"kasm-{zone_config["name"]}-nat",
+            nat = RouterNat(f'kasm-{zone_config["name"]}-nat',
+                                 name=f'kasm-{zone_config["name"]}-nat',
                                  router=router.name,
                                  nat_ip_allocate_option="AUTO_ONLY",
                                  source_subnetwork_ip_ranges_to_nat="ALL_SUBNETWORKS_ALL_IP_RANGES",
@@ -198,7 +198,7 @@ class SetupGcpNetwork:
                                               ))
             self.additional_zone_public_ip_address.append(public_ip_address)
             # pulumi.export(f"kasm-{zone_config["name"]}-ingress-loadbalancer-ip", public_ip_address.address)
-            self.record_set =RecordSet(f"kasm-{zone_config["name"]}-record-set",
+            self.record_set =RecordSet(f'kasm-{zone_config["name"]}-record-set',
                                        name=f'{zone_config["domain"]}.',
                                        type="A",
                                        ttl=300,
@@ -217,7 +217,7 @@ class SetupGcpNetwork:
                                               ))
             self.additional_zone_proxy_vm_public_ip_address.append(proxy_public_ip_address)
             # pulumi.export(f"kasm-{zone_config["name"]}-proxy-public-ip", proxy_public_ip_address.address)
-            self.record_set =RecordSet(f"kasm-{zone_config["name"]}-proxy-record-set",
+            self.record_set =RecordSet(f'kasm-{zone_config["name"]}-proxy-record-set',
                                        name=f'{zone_config["proxy_domain"]}.',
                                        type="A",
                                        ttl=300,

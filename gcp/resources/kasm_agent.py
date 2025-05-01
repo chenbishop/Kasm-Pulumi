@@ -53,8 +53,8 @@ class SetupKasmAgent:
                                                 manager_url= zone_config["domain"],
                                                 manager_token=kasm_helm.manager_token)
             for agent_index in range(1, int(zone_config["agent_number"])+1):
-                agent = Instance(f"kasm-{zone_config["name"]}-agent-{agent_index}",
-                                 name=f"kasm-{zone_config["name"]}-agent-{agent_index}",
+                agent = Instance('kasm-{zone_config["name"]}-agent-{agent_index}',
+                                 name=f'kasm-{zone_config["name"]}-agent-{agent_index}',
                                  network_interfaces=[{
                                      "access_configs": [{}],
                                      "network": gcp_network.vpc.id,
@@ -76,8 +76,8 @@ class SetupKasmAgent:
 
             # Create Proxy VM For Additional Zones
             proxy_startup_script = get_proxy_startup_script(data.get("domain"), kasm_helm.service_token, zone_config["name"], kasm_helm.tls_crt, kasm_helm.tls_key)
-            proxy = Instance(f"kasm-{zone_config["name"]}-proxy",
-                             name=f"kasm-{zone_config["name"]}-proxy",
+            proxy = Instance(f'kasm-{zone_config["name"]}-proxy',
+                             name=f'kasm-{zone_config["name"]}-proxy',
                              network_interfaces=[{
                                  "access_configs":  [{
                                      "nat_ip": gcp_network.additional_zone_proxy_vm_public_ip_address[zone_index-2].address,

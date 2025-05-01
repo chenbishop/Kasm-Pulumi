@@ -23,7 +23,7 @@ class KasmDeployment:
     def __init__(self, gcp_network, gcp_cluster, gcp_db):
         # Load the zone configuration
         helm_zone_config = []
-        alt_hostname = [f"*.{data.get("domain")}"]
+        alt_hostname = [f'*.{data.get("domain")}']
         for zone_index in range(len(additional_zone)):
             zone_config = {
                 "name": additional_zone[zone_index]["name"],

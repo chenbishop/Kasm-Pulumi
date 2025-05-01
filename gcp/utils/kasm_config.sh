@@ -101,19 +101,19 @@ ZONE_INFO=$(echo "$response" | jq '{
     zone_name: .zone_name,
     zone_id: .zone_id,
     total_memory_gb: (
-      if (.servers | length) == 0 then 16 else (([.servers[].memory] | add) / 1073741824) | floor end
+      if (.servers | length) == 0 then 16 else (([.servers[].memory] | add) / 1073741824) | ceil end
     ),
     total_cores: (
       if (.servers | length) == 0 then 8 else ([.servers[].cores] | add) end
     ),
     avg_memory_gb: (
-      if (.servers | length) == 0 then 16 else ((([.servers[].memory] | add) / (.servers | length) / 1073741824) | floor) end
+      if (.servers | length) == 0 then 16 else ((([.servers[].memory] | add) / (.servers | length) / 1073741824) | ceil) end
     ),
     avg_memory_mb: (
-      if (.servers | length) == 0 then 16 * 1024 else (((([.servers[].memory] | add) / (.servers | length) / 1073741824) | floor) * 1024) end
+      if (.servers | length) == 0 then 16 * 1024 else (((([.servers[].memory] | add) / (.servers | length) / 1073741824) | ceil) * 1024) end
     ),
     avg_cores: (
-      if (.servers | length) == 0 then 8 else (([.servers[].cores] | add) / (.servers | length) | floor) end
+      if (.servers | length) == 0 then 8 else (([.servers[].cores] | add) / (.servers | length) | ceil) end
     )
   }]
 }')
