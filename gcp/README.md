@@ -195,6 +195,48 @@ In the Kasm admin console, select **Workspaces > Registry** and choose the works
 ## Start A Kasm Session
 Navigate to the **WORKSPACES** tab at the top of the page and start your first Kasm session once the workspace image is ready!
 
+## (Optional) Enable Kasm Autoscaler
+The Kasm Autoscaler is included with the default configuration as part of the Pulumi deployment but is disabled by default. To enable it, you will need a GCP service account and service account key with the following roles in the same project that is configured in the Pulumi configuration:
+- **`roles/compute.admin`**  
+- **`roles/iam.serviceAccountUser`**
+
+For instructions on creating a service account and key, refer to the following links:
+- [Creating Service Accounts](https://cloud.google.com/iam/docs/service-accounts-create#creating)
+- [Creating and Deleting Service Account Keys](https://cloud.google.com/iam/docs/keys-create-delete#creating)
+
+
+### Steps to Enable the Kasm Autoscaler:
+1. **Access the Kasm Admin UI**:  
+   In the Kasm Admin UI, navigate to **Infrastructure** → **Pools** → **All VM Provider Configs**.
+2. **Edit the Desired Zone**:  
+   Select the zone where you wish to enable the Kasm Autoscaler and click **Edit**.
+3. **Add GCP Service Account Key**:  
+   Copy your **GCP service account key** (in JSON format) and paste it into the **GCP Credentials (JSON)** section.
+4. **Configure Optional Settings** (if needed):  
+   If the default values don't meet your requirements, adjust the following options:
+  - **Max Instances**
+  - **Machine Type**
+  - **Boot Volume GB**  
+    For full details on all available configuration options, refer to the [Kasm Documentation](https://kasmweb.com/docs/latest/guide/zones/aws_autoscaling.html#google-cloud-gcp-settings).
+5. **Save Your Changes**:  
+   After reviewing your settings, click **Submit** to save the changes.
+6. **Navigate to AutoScale Configs**:  
+   Next, go to **Infrastructure** → **Pools** → **All AutoScale Configs**.
+7. **Edit the AutoScale Configuration**:  
+   Select and **Edit** the AutoScale configuration you wish to enable. Ensure this is the same VM Provider zone to which you previously added your GCP service key.
+8. **Enable the Autoscaler**:  
+   Toggle the **Enabled** option to activate the Autoscaler.
+9. **Configure Additional Settings** (if necessary):  
+   Modify the following optional settings:
+  - **Standby Cores**
+  - **Standby GPUs**
+  - **Standby Memory**
+  - **Agent Cores Override**
+  - **Agent GPUs Override**
+  - **Agent Memory Override**  
+    For more information on all available configuration options, refer to the [Kasm Documentation](https://kasmweb.com/docs/latest/guide/zones/aws_autoscaling.html#general-settings).
+10. **Finalize the Configuration**:  
+    Click **Next** and then **Finish** to apply the changes.
 
 ## Created Pulumi Resources
 ### GCP Networking
