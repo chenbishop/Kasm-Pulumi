@@ -196,7 +196,9 @@ In the Kasm admin console, select **Workspaces > Registry** and choose the works
 Navigate to the **WORKSPACES** tab at the top of the page and start your first Kasm session once the workspace image is ready!
 
 ## (Optional) Enable Kasm Autoscaler
-The Kasm Autoscaler is included with the default configuration as part of the Pulumi deployment but is disabled by default. To enable it, you will need a GCP service account and service account key with the following roles in the same project that is configured in the Pulumi configuration:
+Kasm has the ability to automatically provision and destroy agents based on user demand. The overall goal of the features is to ensure Staged Sessions are created, any additional hot spare compute resources (e.g agents) are always available to support on-demand Kasm sessions, and to reduce costs by destroying those resources when no longer needed. 
+
+The Kasm Autoscale configuration is included as part of the Pulumi deployment but is disabled by default. To enable it, you will need a GCP service account and service account key with the following roles in the same project that is configured in the Pulumi configuration:
 - **`roles/compute.admin`**  
 - **`roles/iam.serviceAccountUser`**
 
