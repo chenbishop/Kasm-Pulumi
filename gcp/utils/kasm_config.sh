@@ -100,13 +100,23 @@ ZONE_INFO=$(echo "$response" | jq '{
   zones: [.zones[] | {
     zone_name: .zone_name,
     zone_id: .zone_id,
-    total_memory_gb: ((([.servers[].memory] | add) / 1073741824) | floor),
-    total_cores: ([.servers[].cores] | add),
-    avg_memory_gb: ((([.servers[].memory] | add) / (.servers | length) / 1073741824) | floor),
-    avg_memory_mb: (((([.servers[].memory] | add) / (.servers | length) / 1073741824) | floor) * 1024),
-    avg_cores: (([.servers[].cores] | add) / (.servers | length) | floor),
+    total_memory_gb: (
+      if (.servers | length) == 0 then 16 else (([.servers[].memory] | add) / 1073741824) | floor end
+    ),
+    total_cores: (
+      if (.servers | length) == 0 then 8 else ([.servers[].cores] | add) end
+    ),
+    avg_memory_gb: (
+      if (.servers | length) == 0 then 16 else ((([.servers[].memory] | add) / (.servers | length) / 1073741824) | floor) end
+    ),
+    avg_memory_mb: (
+      if (.servers | length) == 0 then 16 * 1024 else (((([.servers[].memory] | add) / (.servers | length) / 1073741824) | floor) * 1024) end
+    ),
+    avg_cores: (
+      if (.servers | length) == 0 then 8 else (([.servers[].cores] | add) / (.servers | length) | floor) end
+    )
   }]
-}');
+}')
 
 CERT_ESCAPED=${CERT//$'\n'/\\n}
 CERT_KEY_ESCAPED=${CERT_KEY//$'\n'/\\n}
