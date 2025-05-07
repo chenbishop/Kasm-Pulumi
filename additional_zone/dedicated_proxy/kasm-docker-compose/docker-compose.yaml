@@ -22,6 +22,8 @@ services:
       REGISTRATION_TOKEN: ${KASM_REGISTRATION_TOKEN}
       ZONE: ${KASM_ZONE}
       SERVER_ZONE_NAME: ${KASM_ZONE}
+      SERVER_ADDRESS: ${SERVER_ADDRESS}
+      SERVER_PORT: "8080"
     restart: always
   rdp_gateway:
     container_name: rdp-gateway

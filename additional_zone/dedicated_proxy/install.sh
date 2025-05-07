@@ -93,6 +93,7 @@ if [[ ! -e /opt/kasm/proxy-startup-script-completed ]]; then
 KASM_API_HOSTNAME="$domain"
 KASM_REGISTRATION_TOKEN="$service_token"
 KASM_ZONE="$zone"
+SERVER_ADDRESS="$HOSTNAME"
 EOL
 
 
